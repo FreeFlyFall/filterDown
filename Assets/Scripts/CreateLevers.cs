@@ -30,9 +30,27 @@ public class CreateLevers : MonoBehaviour
     public TextMeshProUGUI topInfiniteScoreText;
     private string topInfiniteScore;
 
+    //GameSettings // effects need implemented
+    private string isModeInfinite;
+    private string isControlInverted;
+    private string isLeverSpeedRandom;
+    private string isSpacingFar;
+    private string isBouncy;
+    //private bool isGravityInverted;
+
+
+    public void setStateBools()
+    {
+        isModeInfinite = PlayerPrefs.GetString("isModeInfinite", "true");
+        isControlInverted = PlayerPrefs.GetString("isControlInverted", "false");
+        isLeverSpeedRandom = PlayerPrefs.GetString("isLeverSpeedRandom", "false");
+        isSpacingFar = PlayerPrefs.GetString("isSpacingFar", "false");
+        isBouncy = PlayerPrefs.GetString("isBouncy", "false");
+    }
 
     void Start()
     {
+        setStateBools();
         //PlayerPrefs.SetString("topInfiniteScore", "0");
 
         // Set score UI
@@ -40,8 +58,8 @@ public class CreateLevers : MonoBehaviour
         topInfiniteScoreText.SetText("Top score: " + topInfiniteScore);
 
         //Set conditional based on boolean manager
-        if(boolManager.isModeInfinite == true) { numberOfLevers = 5; }
-        else { numberOfLevers = 5; } /// set to gamemode specific number later from separate script.
+        if(isModeInfinite == "true") { numberOfLevers = 5; }
+        else { numberOfLevers = 3; } /// set to gamemode specific number later from separate script.
 
         // Get initial position of the ball
         initialBallPosition = ball.transform.position.y;
