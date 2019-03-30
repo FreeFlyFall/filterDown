@@ -45,6 +45,7 @@ public class CreateLevers : MonoBehaviour
         // Rotation Controls
         private string isControlInverted;
         private Vector3 rotationPref;
+        private bool isInputFromMobile = false;
             // Variables for mobile input calculations
             static float lerpUpT = 0.0f;
             static float lerpDownT = 0.0f;
@@ -156,24 +157,23 @@ public class CreateLevers : MonoBehaviour
         * The code has to be somewhere. At least we have the CPIM now. Where would I be without that? 
         * I'd be here, coding, for a lot longer. That's where I'd be.*/
         rotationInput = Input.GetAxis("Horizontal");
-        if (CrossPlatformInputManager.GetButton("a") == true)
+        if (Application.platform == RuntimePlatform.Android)
         {
-            lerpDownT = 0f;
-            rotationInput = Mathf.Lerp(0.0f, -1f, lerpUpT);
-            lastPressedMobileInputValue = -1f;
-        } else if(CrossPlatformInputManager.GetButton("d") == true)
-        {
-            lerpDownT = 0f;
-            rotationInput = Mathf.Lerp(0.0f, 1f, lerpUpT);
-            lastPressedMobileInputValue = 1f;
+            if (CrossPlatformInputManager.GetButton("a") == true)
+            {
+                SetCustomMobileInputVariables(-1f);
+            } else if(CrossPlatformInputManager.GetButton("d") == true)
+            {
+                SetCustomMobileInputVariables(1f);
+            }
+            if(CrossPlatformInputManager.GetButton("a") == false && CrossPlatformInputManager.GetButton("d") == false)
+            {
+                lerpUpT = 0f;
+                rotationInput = Mathf.Lerp(lastPressedMobileInputValue, 0f, lerpDownT);
+                lerpDownT += customInputGravity * Time.deltaTime;
+            }
         }
-        lerpUpT += customInputGravity * Time.deltaTime;
-        if(CrossPlatformInputManager.GetButton("a") == false && CrossPlatformInputManager.GetButton("d") == false)
-        {
-            lerpUpT = 0f;
-            rotationInput = Mathf.Lerp(lastPressedMobileInputValue, 0f, lerpDownT);
-            lerpDownT += customInputGravity * Time.deltaTime;
-        }
+        
 
         for (int i = 0; i < leverArray.Length; i++)
         {
@@ -188,6 +188,14 @@ public class CreateLevers : MonoBehaviour
             
         }
         
+    }
+
+    void SetCustomMobileInputVariables(float horizontalInput)
+    {
+        lerpDownT = 0f;
+        rotationInput = Mathf.Lerp(0.0f, horizontalInput, lerpUpT);
+        lastPressedMobileInputValue = horizontalInput;
+        lerpUpT += customInputGravity * Time.deltaTime;
     }
 
     IEnumerator SetInfiniteScoreText()

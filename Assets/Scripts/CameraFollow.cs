@@ -8,20 +8,23 @@ public class CameraFollow : MonoBehaviour
     public Transform target; 
 
     private float smoothSpeed = 0.4f;
-    public Vector3 offset;
+    public Vector3 offset = new Vector3 (0,0, -10f);
     private Vector3 zeroVelocity = Vector3.zero;
 
     void LateUpdate()
     {
-        if(Input.deviceOrientation == DeviceOrientation.Portrait)
+        if(Application.platform == RuntimePlatform.Android)
         {
-            offset = new Vector3 (0, 0, -13f);
-        } else
-        {
-            offset = new Vector3(0, 0, -10f);
+            if(Screen.orientation == ScreenOrientation.Portrait)
+            {
+                offset = new Vector3 (0, 0, -13f);
+            } else
+            {
+                offset = new Vector3(0, 0, -10f);
+            }
         }
-        Debug.Log(offset);
-        Debug.Log(Screen.orientation);
+        
+        //Debug.Log(offset);
         Vector3 desiredPosition = target.position + offset;
         Vector3 smoothedPosition = Vector3.SmoothDamp(transform.position, desiredPosition, ref zeroVelocity, smoothSpeed);
         transform.position = smoothedPosition;
