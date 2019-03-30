@@ -23,7 +23,9 @@ public class CameraFollow : MonoBehaviour
                 offset = new Vector3(0, 0, -10f);
             }
         }
-        else if(Application.platform == RuntimePlatform.WindowsEditor)
+        else if(Application.platform == RuntimePlatform.WindowsEditor ||
+            Application.platform == RuntimePlatform.WindowsPlayer ||
+            Application.platform == RuntimePlatform.WebGLPlayer)
         {
             offset = new Vector3(0, 0, -10f);
         }
