@@ -798,12 +798,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81b1d6f554a591d4ca0435f611f15aa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boolManager: {fileID: 0}
   ball: {fileID: 248369877}
   leverPrefab: {fileID: 607322466464545930, guid: 9a94ef67776111e47a98cc211861bc50,
     type: 3}
   infiniteScoreText: {fileID: 1552747192}
   topInfiniteScoreText: {fileID: 1487794602}
+  ballMaterial: {fileID: 13400000, guid: fb92610ae3579ba4692fcd579cfa8985, type: 2}
+  isLeverSpeedRandom: 
 --- !u!1 &775413023
 GameObject:
   m_ObjectHideFlags: 0

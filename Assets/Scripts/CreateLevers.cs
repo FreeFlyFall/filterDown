@@ -34,6 +34,8 @@ public class CreateLevers : MonoBehaviour
     private const int FarSpacing = 6;
 
     private string isBouncy;
+    public PhysicMaterial ballMaterial;
+
     //private bool horizontalMode;
     //private bool isGravityInverted;
 
@@ -55,14 +57,24 @@ public class CreateLevers : MonoBehaviour
     {
 
         //Set Unlockable Bools
+        isModeInfinite = PlayerPrefs.GetString("isModeInfinite", "true");
+
         isControlInverted = PlayerPrefs.GetString("isControlInverted", "false");
         rotationPref = isControlInverted == "true" ? Vector3.forward : -Vector3.forward;
 
         isLeverSpeedRandom = PlayerPrefs.GetString("isLeverSpeedRandom", "false");
 
-        isModeInfinite = PlayerPrefs.GetString("isModeInfinite", "true");
         isSpacingFar = PlayerPrefs.GetString("isSpacingFar", "false");
+
         isBouncy = PlayerPrefs.GetString("isBouncy", "false");
+        if (isBouncy == "true")
+        {             
+            ballMaterial.bounciness = 1f;
+        }
+        else
+        {
+            ballMaterial.bounciness = 0.5f;
+        }
 
         //Clear all playerprefs data
         //PlayerPrefs.SetString("topInfiniteScore", "0");
