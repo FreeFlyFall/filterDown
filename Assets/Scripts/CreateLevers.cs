@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
-
-
+using UnityStandardAssets.CrossPlatformInput;
 
 public class CreateLevers : MonoBehaviour
 {
@@ -43,9 +42,14 @@ public class CreateLevers : MonoBehaviour
     private float[] rotationspeedArray = new float[5];
     public string isLeverSpeedRandom;
     private float rotationInput;
-
-    private string isControlInverted;
-    private Vector3 rotationPref;
+        // Rotation Controls
+        private string isControlInverted;
+        private Vector3 rotationPref;
+            // Variables for mobile input calculations
+            static float lerpUpT = 0.0f;
+            static float lerpDownT = 0.0f;
+            private float lastPressedMobileInputValue = 0.0f;
+            private float customInputGravity = 7.0f;
 
     //Return custom range for lever rotation speed
     private float GetRandomLeverSpeed()
@@ -76,7 +80,7 @@ public class CreateLevers : MonoBehaviour
             ballMaterial.bounciness = 0.5f;
         }
 
-        //Clear all playerprefs data
+        //Clear all stored PlayerPrefs
         //PlayerPrefs.SetString("topInfiniteScore", "0");
 
         // Set score UI
@@ -139,15 +143,39 @@ public class CreateLevers : MonoBehaviour
         SceneManager.LoadScene(currentScene);
     }
 
-    void Update()
+    public void Update()
     {
         // If 'i' is pressed, reload scene
         if (Input.GetKeyDown(KeyCode.I))
         {
             ReloadScene();
         }
-        rotationInput = UnityEngine.Input.GetAxis("Horizontal");
-        for(int i = 0; i < leverArray.Length; i++)
+
+        /* Handle Desktop and mobile input to turn the levers with similar inertia.
+        * Is there really no way to simulate buttonpresses for the engine inputs? Seriously?
+        * The code has to be somewhere. At least we have the CPIM now. Where would I be without that? 
+        * I'd be here, coding, for a lot longer. That's where I'd be.*/
+        rotationInput = Input.GetAxis("Horizontal");
+        if (CrossPlatformInputManager.GetButton("a") == true)
+        {
+            lerpDownT = 0f;
+            rotationInput = Mathf.Lerp(0.0f, -1f, lerpUpT);
+            lastPressedMobileInputValue = -1f;
+        } else if(CrossPlatformInputManager.GetButton("d") == true)
+        {
+            lerpDownT = 0f;
+            rotationInput = Mathf.Lerp(0.0f, 1f, lerpUpT);
+            lastPressedMobileInputValue = 1f;
+        }
+        lerpUpT += customInputGravity * Time.deltaTime;
+        if(CrossPlatformInputManager.GetButton("a") == false && CrossPlatformInputManager.GetButton("d") == false)
+        {
+            lerpUpT = 0f;
+            rotationInput = Mathf.Lerp(lastPressedMobileInputValue, 0f, lerpDownT);
+            lerpDownT += customInputGravity * Time.deltaTime;
+        }
+
+        for (int i = 0; i < leverArray.Length; i++)
         {
             float rotationSpeedArrayIndex = rotationspeedArray[i];
             if (isLeverSpeedRandom == "true")

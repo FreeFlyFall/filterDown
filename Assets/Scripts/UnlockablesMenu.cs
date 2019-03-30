@@ -13,11 +13,11 @@ public class UnlockablesMenu : MonoBehaviour
 
     void Start()
     {
-        infiniteModeToggle.isOn = (PlayerPrefs.GetString("isModeInfinite", "true") == "true") ? true : false;
-        invertedControlsToggle.isOn = (PlayerPrefs.GetString("isControlInverted", "true") == "true") ? true : false;
-        randomRotationSpeedToggle.isOn = (PlayerPrefs.GetString("isLeverSpeedRandom", "true") == "true") ? true : false;
-        farLeverSpacingToggle.isOn = (PlayerPrefs.GetString("isSpacingFar", "true") == "true") ? true : false;
-        bigBounceToggle.isOn = (PlayerPrefs.GetString("isBouncy", "true") == "true") ? true : false;
+        infiniteModeToggle.isOn = (PlayerPrefs.GetString("isModeInfinite", "false") == "true") ? true : false;
+        invertedControlsToggle.isOn = (PlayerPrefs.GetString("isControlInverted", "false") == "true") ? true : false;
+        randomRotationSpeedToggle.isOn = (PlayerPrefs.GetString("isLeverSpeedRandom", "false") == "true") ? true : false;
+        farLeverSpacingToggle.isOn = (PlayerPrefs.GetString("isSpacingFar", "false") == "true") ? true : false;
+        bigBounceToggle.isOn = (PlayerPrefs.GetString("isBouncy", "false") == "true") ? true : false;
     }
 
     public void StoreToggleBool(string booleanName, bool isToggled)

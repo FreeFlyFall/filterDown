@@ -13,6 +13,15 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
+        if(Input.deviceOrientation == DeviceOrientation.Portrait)
+        {
+            offset = new Vector3 (0, 0, -13f);
+        } else
+        {
+            offset = new Vector3(0, 0, -10f);
+        }
+        Debug.Log(offset);
+        Debug.Log(Screen.orientation);
         Vector3 desiredPosition = target.position + offset;
         Vector3 smoothedPosition = Vector3.SmoothDamp(transform.position, desiredPosition, ref zeroVelocity, smoothSpeed);
         transform.position = smoothedPosition;

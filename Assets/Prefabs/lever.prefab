@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 607322466464545928}
   - component: {fileID: 607322466464545929}
   - component: {fileID: 385593234020449139}
-  - component: {fileID: 7130801449149258626}
   m_Layer: 0
   m_Name: lever
   m_TagString: Untagged
@@ -109,16 +108,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 78
   m_CollisionDetection: 0
---- !u!114 &7130801449149258626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 607322466464545930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51224def4877dbd4c95172c0baadbe9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationInput: 0
