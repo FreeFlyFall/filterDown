@@ -12,6 +12,7 @@ public class UnlockablesMenu : MonoBehaviour
     public Toggle bigBounceToggle;
     public Toggle randomRotationInversionToggle;
     public Toggle invertGravityToggle;
+    public Toggle horizontalMode;
 
 
     void Start()
@@ -24,7 +25,7 @@ public class UnlockablesMenu : MonoBehaviour
         bigBounceToggle.isOn = (PlayerPrefs.GetString("isBouncy", "false") == "true") ? true : false;
         randomRotationInversionToggle.isOn = (PlayerPrefs.GetString("isControlRandom", "false") == "true") ? true : false;
         invertGravityToggle.isOn = (PlayerPrefs.GetString("isGravityInverted", "false") == "true") ? true : false;
-
+        horizontalMode.isOn = (PlayerPrefs.GetString("isHorizontalMode", "false") == "true") ? true : false;
     }
 
     public void StoreToggleBool(string booleanName, bool isToggled)
@@ -63,6 +64,10 @@ public class UnlockablesMenu : MonoBehaviour
     public void SetInvertGravityToggle(bool isToggled)
     {
         StoreToggleBool("isGravityInverted", isToggled);
+    }
+    public void SetHorizontalModeToggle(bool isToggled)
+    {
+        StoreToggleBool("isHorizontalMode", isToggled);
     }
 
     void Update()
