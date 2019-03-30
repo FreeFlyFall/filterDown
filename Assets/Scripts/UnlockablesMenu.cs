@@ -10,7 +10,8 @@ public class UnlockablesMenu : MonoBehaviour
     public Toggle randomRotationSpeedToggle;
     public Toggle farLeverSpacingToggle;
     public Toggle bigBounceToggle;
-    public Toggle randomRotationInversion;
+    public Toggle randomRotationInversionToggle;
+    public Toggle invertGravityToggle;
 
 
     void Start()
@@ -21,7 +22,9 @@ public class UnlockablesMenu : MonoBehaviour
         randomRotationSpeedToggle.isOn = (PlayerPrefs.GetString("isLeverSpeedRandom", "false") == "true") ? true : false;
         farLeverSpacingToggle.isOn = (PlayerPrefs.GetString("isSpacingFar", "false") == "true") ? true : false;
         bigBounceToggle.isOn = (PlayerPrefs.GetString("isBouncy", "false") == "true") ? true : false;
-        randomRotationInversion.isOn = (PlayerPrefs.GetString("isControlRandom", "false") == "true") ? true : false;
+        randomRotationInversionToggle.isOn = (PlayerPrefs.GetString("isControlRandom", "false") == "true") ? true : false;
+        invertGravityToggle.isOn = (PlayerPrefs.GetString("isGravityInverted", "false") == "true") ? true : false;
+
     }
 
     public void StoreToggleBool(string booleanName, bool isToggled)
@@ -53,11 +56,14 @@ public class UnlockablesMenu : MonoBehaviour
     {
         StoreToggleBool("isBouncy", isToggled);
     }
-    public void SetRandomRotationInversion(bool isToggled)
+    public void SetRandomRotationInversionToggle(bool isToggled)
     {
         StoreToggleBool("isControlRandom", isToggled);
     }
-        
+    public void SetInvertGravityToggle(bool isToggled)
+    {
+        StoreToggleBool("isGravityInverted", isToggled);
+    }
 
     void Update()
     {
