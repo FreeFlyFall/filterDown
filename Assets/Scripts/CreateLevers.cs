@@ -8,10 +8,6 @@ using TMPro;
 
 public class CreateLevers : MonoBehaviour
 {
-    //private bool isModeInfinite = true; /// load from separate script later
-
-    public BoolManager boolManager;
-
     public GameObject ball;
     private Rigidbody ballrb;
     private float initialBallPosition;
@@ -30,27 +26,45 @@ public class CreateLevers : MonoBehaviour
     public TextMeshProUGUI topInfiniteScoreText;
     private string topInfiniteScore;
 
-    //GameSettings // effects need implemented
+    //GameSettings
     private string isModeInfinite;
-    private string isControlInverted;
-    private string isLeverSpeedRandom;
+
     private string isSpacingFar;
+    private const int RegSpacing = 4;
+    private const int FarSpacing = 6;
+
     private string isBouncy;
+    //private bool horizontalMode;
     //private bool isGravityInverted;
 
+    private const float RotationSpeed = 130f;
+    private float[] rotationspeedArray = new float[5];
+    public string isLeverSpeedRandom;
+    private float rotationInput;
 
-    public void setStateBools()
+    private string isControlInverted;
+    private Vector3 rotationPref;
+
+    //Return custom range for lever rotation speed
+    private float GetRandomLeverSpeed()
     {
-        isModeInfinite = PlayerPrefs.GetString("isModeInfinite", "true");
-        isControlInverted = PlayerPrefs.GetString("isControlInverted", "false");
-        isLeverSpeedRandom = PlayerPrefs.GetString("isLeverSpeedRandom", "false");
-        isSpacingFar = PlayerPrefs.GetString("isSpacingFar", "false");
-        isBouncy = PlayerPrefs.GetString("isBouncy", "false");
+        return Random.Range(80, 230);
     }
 
     void Start()
     {
-        setStateBools();
+
+        //Set Unlockable Bools
+        isControlInverted = PlayerPrefs.GetString("isControlInverted", "false");
+        rotationPref = isControlInverted == "true" ? Vector3.forward : -Vector3.forward;
+
+        isLeverSpeedRandom = PlayerPrefs.GetString("isLeverSpeedRandom", "false");
+
+        isModeInfinite = PlayerPrefs.GetString("isModeInfinite", "true");
+        isSpacingFar = PlayerPrefs.GetString("isSpacingFar", "false");
+        isBouncy = PlayerPrefs.GetString("isBouncy", "false");
+
+        //Clear all playerprefs data
         //PlayerPrefs.SetString("topInfiniteScore", "0");
 
         // Set score UI
@@ -59,7 +73,7 @@ public class CreateLevers : MonoBehaviour
 
         //Set conditional based on boolean manager
         if(isModeInfinite == "true") { numberOfLevers = 5; }
-        else { numberOfLevers = 3; } /// set to gamemode specific number later from separate script.
+        else { numberOfLevers = 5; } /// set to gamemode specific number later from separate script.
 
         // Get initial position of the ball
         initialBallPosition = ball.transform.position.y;
@@ -90,10 +104,12 @@ public class CreateLevers : MonoBehaviour
             newLever.transform.position = leverPos;
             newLever.transform.rotation = leverRot;
             leverArray[i] = newLever;
+            rotationspeedArray[i] = GetRandomLeverSpeed();
             if (isColumn1 == true) { leverPos.x += 4; }
             else { leverPos.x -= 4; }
             isColumn1 = !isColumn1;
-            leverPos.y -= 4;
+            if(isSpacingFar == "true") { leverPos.y -= FarSpacing; }
+            else { leverPos.y -= RegSpacing; }
             leverRot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f));
         }
     }
@@ -117,7 +133,21 @@ public class CreateLevers : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.I))
         {
             ReloadScene();
-        }    
+        }
+        rotationInput = UnityEngine.Input.GetAxis("Horizontal");
+        for(int i = 0; i < leverArray.Length; i++)
+        {
+            float rotationSpeedArrayIndex = rotationspeedArray[i];
+            if (isLeverSpeedRandom == "true")
+            {
+                leverArray[i].transform.Rotate(rotationPref * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+            } else
+            {
+                leverArray[i].transform.Rotate(rotationPref * rotationInput * RotationSpeed * Time.deltaTime);
+            }
+            
+        }
+        
     }
 
     IEnumerator SetInfiniteScoreText()
@@ -143,6 +173,7 @@ public class CreateLevers : MonoBehaviour
             for (int i = 0; i < leverArray.Length - 1; i++)
             {
                 leverArray[i] = leverArray[i + 1];
+                rotationspeedArray[i] = rotationspeedArray[i + 1];
             }
             // Create new lever (abstract to method)
             leverRot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f));
@@ -150,10 +181,12 @@ public class CreateLevers : MonoBehaviour
             newLever.transform.position = leverPos;
             newLever.transform.rotation = leverRot;
             leverArray[leverArray.Length - 1] = newLever;
+            rotationspeedArray[rotationspeedArray.Length - 1] = GetRandomLeverSpeed();
             if (isColumn1 == true) { leverPos.x += 4; }
             else { leverPos.x -= 4; }
             isColumn1 = !isColumn1;
-            leverPos.y -= 4;
+            if (isSpacingFar == "true") { leverPos.y -= FarSpacing; }
+            else { leverPos.y -= RegSpacing; }
         }
         yield return new WaitForSeconds(0.1f);
         StartCoroutine(CheckNextLever());
