@@ -44,6 +44,8 @@ public class CreateLevers : MonoBehaviour
     private float rotationInput;
         // Rotation Controls
         private string isControlInverted;
+        private string isControlRandom;
+        private Vector3[] randomControlArray = new Vector3[5];
         private Vector3 rotationPref;
         private bool isInputFromMobile = false;
             // Variables for mobile input calculations
@@ -66,6 +68,7 @@ public class CreateLevers : MonoBehaviour
 
         isControlInverted = PlayerPrefs.GetString("isControlInverted", "false");
         rotationPref = isControlInverted == "true" ? Vector3.forward : -Vector3.forward;
+        isControlRandom = PlayerPrefs.GetString("isControlRandom", "false");
 
         isLeverSpeedRandom = PlayerPrefs.GetString("isLeverSpeedRandom", "false");
 
@@ -110,8 +113,6 @@ public class CreateLevers : MonoBehaviour
         StartCoroutine(CheckNextLever());
     }
 
-
-
     // Initialize levers in scene
     private void PlaceInitialLevers()
     {
@@ -122,6 +123,11 @@ public class CreateLevers : MonoBehaviour
             newLever.transform.rotation = leverRot;
             leverArray[i] = newLever;
             rotationspeedArray[i] = GetRandomLeverSpeed();
+            float rand = Random.Range(0, 1);
+            if (isControlRandom == "true")
+            {
+                randomControlArray[i] = Random.Range(0f, 1f) >= 0.5f ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
+            }
             if (isColumn1 == true) { leverPos.x += 4; }
             else { leverPos.x -= 4; }
             isColumn1 = !isColumn1;
@@ -173,12 +179,20 @@ public class CreateLevers : MonoBehaviour
                 lerpDownT += customInputGravity * Time.deltaTime;
             }
         }
-        
-
+        //rotate each lever in the array for the initial levers
         for (int i = 0; i < leverArray.Length; i++)
         {
             float rotationSpeedArrayIndex = rotationspeedArray[i];
-            if (isLeverSpeedRandom == "true")
+            Vector3 randomControlArrayIndex = randomControlArray[i];
+            if (isControlRandom == "true" && isLeverSpeedRandom == "true")
+            {
+                leverArray[i].transform.Rotate(randomControlArrayIndex * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+            }
+            else if (isControlRandom == "true")
+            {
+                leverArray[i].transform.Rotate(randomControlArrayIndex * rotationInput * RotationSpeed * Time.deltaTime);
+            }
+            else if (isLeverSpeedRandom == "true")
             {
                 leverArray[i].transform.Rotate(rotationPref * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
             } else
@@ -222,6 +236,7 @@ public class CreateLevers : MonoBehaviour
             {
                 leverArray[i] = leverArray[i + 1];
                 rotationspeedArray[i] = rotationspeedArray[i + 1];
+                randomControlArray[i] = randomControlArray[i + 1];
             }
             // Create new lever (abstract to method)
             leverRot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f));
@@ -230,6 +245,7 @@ public class CreateLevers : MonoBehaviour
             newLever.transform.rotation = leverRot;
             leverArray[leverArray.Length - 1] = newLever;
             rotationspeedArray[rotationspeedArray.Length - 1] = GetRandomLeverSpeed();
+            randomControlArray[randomControlArray.Length -1] = Random.Range(0f, 1f) >= 0.5f ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
             if (isColumn1 == true) { leverPos.x += 4; }
             else { leverPos.x -= 4; }
             isColumn1 = !isColumn1;

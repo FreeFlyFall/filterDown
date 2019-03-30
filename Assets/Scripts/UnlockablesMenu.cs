@@ -10,14 +10,18 @@ public class UnlockablesMenu : MonoBehaviour
     public Toggle randomRotationSpeedToggle;
     public Toggle farLeverSpacingToggle;
     public Toggle bigBounceToggle;
+    public Toggle randomRotationInversion;
+
 
     void Start()
     {
+
         infiniteModeToggle.isOn = (PlayerPrefs.GetString("isModeInfinite", "false") == "true") ? true : false;
         invertedControlsToggle.isOn = (PlayerPrefs.GetString("isControlInverted", "false") == "true") ? true : false;
         randomRotationSpeedToggle.isOn = (PlayerPrefs.GetString("isLeverSpeedRandom", "false") == "true") ? true : false;
         farLeverSpacingToggle.isOn = (PlayerPrefs.GetString("isSpacingFar", "false") == "true") ? true : false;
         bigBounceToggle.isOn = (PlayerPrefs.GetString("isBouncy", "false") == "true") ? true : false;
+        randomRotationInversion.isOn = (PlayerPrefs.GetString("isControlRandom", "false") == "true") ? true : false;
     }
 
     public void StoreToggleBool(string booleanName, bool isToggled)
@@ -48,6 +52,10 @@ public class UnlockablesMenu : MonoBehaviour
     public void SetBigBounceToggle(bool isToggled)
     {
         StoreToggleBool("isBouncy", isToggled);
+    }
+    public void SetRandomRotationInversion(bool isToggled)
+    {
+        StoreToggleBool("isControlRandom", isToggled);
     }
         
 
