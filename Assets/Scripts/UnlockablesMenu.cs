@@ -13,6 +13,7 @@ public class UnlockablesMenu : MonoBehaviour
     public Toggle randomRotationInversionToggle;
     public Toggle invertGravityToggle;
     public Toggle horizontalMode;
+    public Toggle neonNightMode;
 
 
     void Start()
@@ -26,6 +27,7 @@ public class UnlockablesMenu : MonoBehaviour
         randomRotationInversionToggle.isOn = (PlayerPrefs.GetString("isControlRandom", "false") == "true") ? true : false;
         invertGravityToggle.isOn = (PlayerPrefs.GetString("isGravityInverted", "false") == "true") ? true : false;
         horizontalMode.isOn = (PlayerPrefs.GetString("isHorizontalMode", "false") == "true") ? true : false;
+        neonNightMode.isOn = (PlayerPrefs.GetString("isNightMode", "false") == "true") ? true : false;
     }
 
     public void StoreToggleBool(string booleanName, bool isToggled)
@@ -68,6 +70,10 @@ public class UnlockablesMenu : MonoBehaviour
     public void SetHorizontalModeToggle(bool isToggled)
     {
         StoreToggleBool("isHorizontalMode", isToggled);
+    }
+    public void SetNeonNightModeToggle(bool isToggled)
+    {
+        StoreToggleBool("isNightMode", isToggled);
     }
 
     void Update()

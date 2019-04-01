@@ -7,12 +7,21 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class CreateLevers : MonoBehaviour
 {
+    //Lights
+    public Light directionalLight;
+
     //Ball properties
     public GameObject ball;
     private Rigidbody ballrb;
     private Vector2 initialBallPosition;
+    public Material dayModeBallColorMaterial;
+    public Material nightModeBallColorMaterial;
+    private Material ballColorMaterial;
 
-    public GameObject leverPrefab;
+    //Lever properties
+    public GameObject dayModeLeverPrefab;
+    public GameObject nightModeLeverPrefab;
+    private GameObject leverPrefab;
     private GameObject[] leverArray = new GameObject[5];
 
     private Vector3 leverPos;
@@ -21,10 +30,10 @@ public class CreateLevers : MonoBehaviour
     private int numberOfLevers;
     private bool isColumn1 = true;
 
+    //Score properties
     public TextMeshProUGUI infiniteScoreText;
-    private string infiniteScoreString;
+    [SerializeField] private ScoreSO scoreOB;
     public TextMeshProUGUI topInfiniteScoreText;
-    private string topInfiniteScore;
 
     //GameSettings
     private string isModeInfinite;
@@ -34,11 +43,11 @@ public class CreateLevers : MonoBehaviour
     private int farSpacing;
 
     private string isBouncy;
-    public PhysicMaterial ballMaterial;
+    public PhysicMaterial ballPhysicMaterial;
 
     private const float RotationSpeed = 130f;
     private float[] rotationspeedArray = new float[5];
-    public string isLeverSpeedRandom;
+    private string isLeverSpeedRandom;
     private float rotationInput;
     // Rotation Controls
     private string isControlInverted;
@@ -55,7 +64,10 @@ public class CreateLevers : MonoBehaviour
     private string isGravityInverted;
     private float leverDeleteBuffer;
 
-    private string isHorizontalMode;// = "true";
+    private string isHorizontalMode;
+
+    private string isNightMode;// = "true";
+    public Material nightSkybox;
 
     //Return custom range for lever rotation speed
     private float GetRandomLeverSpeed()
@@ -79,11 +91,11 @@ public class CreateLevers : MonoBehaviour
         isBouncy = PlayerPrefs.GetString("isBouncy", "false");
         if (isBouncy == "true")
         {
-            ballMaterial.bounciness = 1f;
+            ballPhysicMaterial.bounciness = 1f;
         }
         else
         {
-            ballMaterial.bounciness = 0.5f;
+            ballPhysicMaterial.bounciness = 0.5f;
         }
 
         isGravityInverted = PlayerPrefs.GetString("isGravityInverted", "false");
@@ -106,14 +118,31 @@ public class CreateLevers : MonoBehaviour
 
         isHorizontalMode = PlayerPrefs.GetString("isHorizontalMode", "false");
 
+        isNightMode = PlayerPrefs.GetString("isNightMode", "false");
+        if (isNightMode == "true")
+        {
+            leverPrefab = nightModeLeverPrefab;
+            // Set ball color
+            ballColorMaterial = nightModeBallColorMaterial;
+            ball.GetComponent<MeshRenderer>().material = ballColorMaterial;
+            directionalLight.enabled = false;
+            RenderSettings.skybox = nightSkybox;
+            
+        } else
+        {
+            leverPrefab = dayModeLeverPrefab;
+            /// Leave default skybox; // inaccessible?
+            /// No need to set daytime parameters since they're default
+        }
+
         // end unlockable bools
 
-        //Clear all stored PlayerPrefs
-        //PlayerPrefs.SetString("topInfiniteScore", "0");
+        //Clear top score for testing
+        //PlayerPrefs.DeleteKey("topInfiniteScore");
 
         // Set score UI
-        topInfiniteScore = PlayerPrefs.GetString("topInfiniteScore", "0");
-        topInfiniteScoreText.SetText("Top score: " + topInfiniteScore);
+        scoreOB.topScore = PlayerPrefs.GetString("topInfiniteScore", "0");
+        topInfiniteScoreText.SetText("Top score: " + scoreOB.topScore);
 
         //Set conditional based on boolean manager
         if (isModeInfinite == "true") { numberOfLevers = 5; }
@@ -153,16 +182,14 @@ public class CreateLevers : MonoBehaviour
             }
             SetLeverSpacingAndColumn();
             leverRot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f));
+            
         }
     }
 
     private void ReloadScene()
     {
         //Handle score recording
-        if (int.Parse(infiniteScoreString) > int.Parse(topInfiniteScore))
-        {
-            PlayerPrefs.SetString("topInfiniteScore", infiniteScoreString);
-        }
+        ScoreSO.RecordScore(scoreOB.score, scoreOB.topScore);
 
         // Restart level by reloading scene on 'i' press
         int currentScene = SceneManager.GetActiveScene().buildIndex;
@@ -179,8 +206,8 @@ public class CreateLevers : MonoBehaviour
 
         /* Handle Desktop and mobile input to turn the levers with similar inertia.
         * Is there really no way to simulate buttonpresses for the engine inputs? Seriously?
-        * The code has to be somewhere. At least we have the CPIM now. Where would I be without that? 
-        * I'd be here, coding, for a lot longer. That's where I'd be.*/
+        * The code has to be somewhere. At least we have the CPIM now. Where would I be without that?
+        */
         rotationInput = Input.GetAxis("Horizontal");
         if (Application.platform == RuntimePlatform.Android)
         {
@@ -221,7 +248,6 @@ public class CreateLevers : MonoBehaviour
                 leverArray[i].transform.Rotate(rotationPref * rotationInput * RotationSpeed * Time.deltaTime);
             }
         }
-
     }
 
     void SetCustomMobileInputVariables(float horizontalInput)
@@ -237,24 +263,22 @@ public class CreateLevers : MonoBehaviour
         //Handle score variable and display
         if (isHorizontalMode == "true")
         {
-            infiniteScoreString = (ball.transform.position.x - initialBallPosition.x).ToString("0");
-
+            scoreOB.score = (ball.transform.position.x - initialBallPosition.x).ToString("0");
         }
         else if (isGravityInverted == "true")
         {
             
-            infiniteScoreString = (ball.transform.position.y - initialBallPosition.y).ToString("0");
+            scoreOB.score = (ball.transform.position.y - initialBallPosition.y).ToString("0");
         }
         else
         {
-            infiniteScoreString = (-ball.transform.position.y + initialBallPosition.y).ToString("0");
+            scoreOB.score = (-ball.transform.position.y + initialBallPosition.y).ToString("0");
         }
-        infiniteScoreText.SetText("Score: " + infiniteScoreString);
-        if (int.Parse(infiniteScoreString) > int.Parse(topInfiniteScore))
+        infiniteScoreText.SetText("Score: " + scoreOB.score);
+        if (int.Parse(scoreOB.score) > int.Parse(scoreOB.topScore))
         {
-            topInfiniteScoreText.SetText("Top score: " + infiniteScoreString);
+            topInfiniteScoreText.SetText("Top score: " + scoreOB.score);
         }
-
         yield return new WaitForSeconds(0.1f);
         StartCoroutine(SetInfiniteScoreText());
     }
@@ -284,7 +308,6 @@ public class CreateLevers : MonoBehaviour
                 SetupNextLever();
             }
         }
-
         yield return new WaitForSeconds(0.1f);
         StartCoroutine(CheckNextLever());
     }
@@ -329,7 +352,6 @@ public class CreateLevers : MonoBehaviour
 
     IEnumerator CheckBounds()
     {
-
         if ((ball.transform.position.x > 5 || ball.transform.position.x < -5) && isHorizontalMode != "true")
         {
             ReloadScene();

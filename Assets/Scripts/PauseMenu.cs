@@ -8,6 +8,7 @@ public class PauseMenu : MonoBehaviour
 
     public static bool isPaused = false;
     public GameObject pauseMenuUI;
+    [SerializeField] private ScoreSO scoreSO;
 
     void Update()
     {
@@ -32,6 +33,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
+        ScoreSO.RecordScore(scoreSO.score, scoreSO.topScore);
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
