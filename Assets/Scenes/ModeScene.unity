@@ -655,11 +655,11 @@ Camera:
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
+  m_HDR: 0
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 1
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!4 &534669905
@@ -702,6 +702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81b1d6f554a591d4ca0435f611f15aa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: {fileID: 11400000, guid: 51fa42074aa02004a9ef17dedcb7c1a6, type: 2}
   directionalLight: {fileID: 170076734}
   ball: {fileID: 248369877}
   dayModeBallColorMaterial: {fileID: 2100000, guid: 9d35b214652d13f47a7b30e2330c7751,
@@ -971,7 +972,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuUI: {fileID: 465136433}
-  scoreSO: {fileID: 11400000, guid: 6a14d208104844c42827fec5b998ea59, type: 2}
+  scoreOB: {fileID: 11400000, guid: 6a14d208104844c42827fec5b998ea59, type: 2}
+  state: {fileID: 11400000, guid: 51fa42074aa02004a9ef17dedcb7c1a6, type: 2}
 --- !u!114 &783788679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1243,6 +1245,17 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1037704275}
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -1543,6 +1556,17 @@ MonoBehaviour:
       - m_Target: {fileID: 783788678}
         m_MethodName: Pause
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1037704275}
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

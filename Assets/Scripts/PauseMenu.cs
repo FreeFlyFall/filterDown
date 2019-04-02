@@ -8,10 +8,17 @@ public class PauseMenu : MonoBehaviour
 
     public static bool isPaused = false;
     public GameObject pauseMenuUI;
-    [SerializeField] private ScoreSO scoreSO;
+    [SerializeField] private ScoreSO scoreOB;
+    public StateManager state;
 
     void Update()
     {
+        // If 'i' is pressed, reload scene
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            state.SaveAndReloadScene();
+        }
+        // If 'Esc' is pressed, pause or resume game, depending on the state
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused)
@@ -33,7 +40,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
-        ScoreSO.RecordScore(scoreSO.score, scoreSO.topScore);
+        ScoreSO.RecordScore(scoreOB.score, scoreOB.topScore);
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;

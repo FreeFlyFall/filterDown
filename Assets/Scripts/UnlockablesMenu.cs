@@ -18,7 +18,6 @@ public class UnlockablesMenu : MonoBehaviour
 
     void Start()
     {
-
         infiniteModeToggle.isOn = (PlayerPrefs.GetString("isModeInfinite", "false") == "true") ? true : false;
         invertedControlsToggle.isOn = (PlayerPrefs.GetString("isControlInverted", "false") == "true") ? true : false;
         randomRotationSpeedToggle.isOn = (PlayerPrefs.GetString("isLeverSpeedRandom", "false") == "true") ? true : false;
@@ -74,9 +73,5 @@ public class UnlockablesMenu : MonoBehaviour
     public void SetNeonNightModeToggle(bool isToggled)
     {
         StoreToggleBool("isNightMode", isToggled);
-    }
-
-    void Update()
-    {
     }
 }

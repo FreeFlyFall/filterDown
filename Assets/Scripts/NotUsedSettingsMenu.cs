@@ -48,6 +48,11 @@ public class OptionsMenu : MonoBehaviour
         audioMixer.SetFloat("MainMixerVolume", volume);
     }
 
+    public void SetSens(float sens)
+    {
+        PlayerPrefs.SetFloat("rotationSpeed", sens);
+    }
+
     public void SetQuality(int qualityIndex)
     {
         QualitySettings.SetQualityLevel(qualityIndex);
