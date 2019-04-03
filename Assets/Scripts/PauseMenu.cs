@@ -11,6 +11,11 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private ScoreSO scoreOB;
     public StateManager state;
 
+    void Start()
+    {
+       //Cursor.visible = false;
+    }
+
     void Update()
     {
         // If 'i' is pressed, reload scene
@@ -36,6 +41,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
+        //Cursor.visible = false;
     }
 
     public void Pause()
@@ -44,6 +50,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
+        //Cursor.visible = true;
     }
 
     public void LoadMainMenu()

@@ -3,7 +3,19 @@ guid: 81b1d6f554a591d4ca0435f611f15aa2
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - state: {fileID: 11400000, guid: 51fa42074aa02004a9ef17dedcb7c1a6, type: 2}
+  - directionalLight: {instanceID: 0}
+  - ball: {instanceID: 0}
+  - dayModeBallColorMaterial: {instanceID: 0}
+  - nightModeBallColorMaterial: {instanceID: 0}
+  - dayModeLeverPrefab: {instanceID: 0}
+  - nightModeLeverPrefab: {instanceID: 0}
+  - infiniteScoreText: {instanceID: 0}
+  - scoreOB: {fileID: 11400000, guid: 6a14d208104844c42827fec5b998ea59, type: 2}
+  - topInfiniteScoreText: {instanceID: 0}
+  - ballPhysicMaterial: {instanceID: 0}
+  - nightSkybox: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

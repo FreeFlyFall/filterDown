@@ -56,7 +56,7 @@ public class CreateLevers : MonoBehaviour
     private string isControlRandom;
     private Vector3[] randomControlArray = new Vector3[5];
     private Vector3 rotationPref;
-    private bool isInputFromMobile = false;
+
     // Variables for mobile input calculations
     static float lerpUpT = 0.0f;
     static float lerpDownT = 0.0f;
@@ -68,8 +68,12 @@ public class CreateLevers : MonoBehaviour
 
     private string isHorizontalMode;
 
-    private string isNightMode;// = "true";
+    private string isNightMode;
     public Material nightSkybox;
+
+    private string isEasyMode;// = "false";
+    private float torqueModeMultiplier = 50000.0f;
+    //3999999 - ~9999999 should be a good result for rotationSpeed
 
     //Return custom range for lever rotation speed
     private float GetRandomLeverSpeed()
@@ -77,14 +81,10 @@ public class CreateLevers : MonoBehaviour
         return Random.Range(80, 230);
     }
 
-    public void SetSens()
-    {
-        rotationSpeed = PlayerPrefs.GetFloat("rotationSpeed", 130f);
-    }
-
     void Start()
     {
-        SetSens();
+        //Clear top score on start for testing
+        //PlayerPrefs.DeleteKey("topInfiniteScore");
 
         //Set Unlockable Bools
         isModeInfinite = PlayerPrefs.GetString("isModeInfinite", "true");
@@ -100,11 +100,11 @@ public class CreateLevers : MonoBehaviour
         isBouncy = PlayerPrefs.GetString("isBouncy", "false");
         if (isBouncy == "true")
         {
-            ballPhysicMaterial.bounciness = 1f;
+            ballPhysicMaterial.bounciness = 0.8f;
         }
         else
         {
-            ballPhysicMaterial.bounciness = 0.5f;
+            ballPhysicMaterial.bounciness = 0.35f;
         }
 
         isGravityInverted = PlayerPrefs.GetString("isGravityInverted", "false");
@@ -144,10 +144,10 @@ public class CreateLevers : MonoBehaviour
             /// No need to set daytime parameters since they're default
         }
 
+        isEasyMode = PlayerPrefs.GetString("isEasyMode", "false");
         // end unlockable bools
 
-        //Clear top score for testing
-        //PlayerPrefs.DeleteKey("topInfiniteScore");
+        SetSens();
 
         // Set score UI
         scoreOB.topScore = PlayerPrefs.GetString("topInfiniteScore", "0");
@@ -166,7 +166,7 @@ public class CreateLevers : MonoBehaviour
 
         // Add small force at game start to prevent physics bug when stopping on level lever
         ballrb = ball.GetComponent<Rigidbody>();
-        ballrb.AddForce(transform.right * 2, ForceMode.Impulse);
+        ballrb.AddForce(transform.right, ForceMode.Impulse);
 
         // Start tracking ininite game mode score
         StartCoroutine(SetInfiniteScoreText());
@@ -176,6 +176,18 @@ public class CreateLevers : MonoBehaviour
         StartCoroutine(CheckNextLever());
 
         StartCoroutine(ChangeScore());
+    }
+
+    public void SetSens()
+    {
+        if(isEasyMode != "true")
+        {
+            rotationSpeed = PlayerPrefs.GetFloat("rotationSpeed", 130f) * torqueModeMultiplier;
+        } else
+        {
+            rotationSpeed = PlayerPrefs.GetFloat("rotationSpeed", 130f);
+        }
+        
     }
 
     // Initialize levers in scene
@@ -197,12 +209,22 @@ public class CreateLevers : MonoBehaviour
         }
     }
 
+    public void FixedUpdate()
+    {
+        //Debug.Log(ballrb.velocity);
+        //Debug.Log();
+    }
+
     public void Update()
     {
+///update lever handling to use torque
+
         /* Handle Desktop and mobile input to turn the levers with similar inertia.
         * Is there really no way to simulate buttonpresses for the engine inputs? Seriously?
         * The code has to be somewhere. At least we have the CPIM now. Where would I be without that?
         */
+        // And this is all garbage now because I need to use torque instead of rotation to fix the physics XD
+        // This is what I get for being a genius.
         rotationInput = Input.GetAxis("Horizontal");
         if (Application.platform == RuntimePlatform.Android)
         {
@@ -232,19 +254,44 @@ public class CreateLevers : MonoBehaviour
             Vector3 randomControlArrayIndex = randomControlArray[i];
             if (isControlRandom == "true" && isLeverSpeedRandom == "true")
             {
-                leverArray[i].transform.Rotate(randomControlArrayIndex * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                if(isEasyMode == "true")
+                {
+                    leverArray[i].transform.Rotate(randomControlArrayIndex * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                } else
+                {
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                }
             }
             else if (isControlRandom == "true")
             {
-                leverArray[i].transform.Rotate(randomControlArrayIndex * rotationInput * rotationSpeed * Time.deltaTime);
+                if(isEasyMode == "true")
+                {
+                    leverArray[i].transform.Rotate(randomControlArrayIndex * rotationInput * rotationSpeed * Time.deltaTime);
+                } else
+                {
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * rotationInput * rotationSpeed * Time.deltaTime);
+                }
             }
             else if (isLeverSpeedRandom == "true")
             {
-                leverArray[i].transform.Rotate(rotationPref * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                if(isEasyMode == "true")
+                {
+                    leverArray[i].transform.Rotate(rotationPref * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                } else
+                {
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(rotationPref * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                }
             }
             else
             {
-                leverArray[i].transform.Rotate(rotationPref * rotationInput * rotationSpeed * Time.deltaTime);
+                if(isEasyMode == "true")
+                {
+                    leverArray[i].transform.Rotate(rotationPref * rotationInput * rotationSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(rotationPref * rotationInput * rotationSpeed * Time.deltaTime);
+                }
             }
         }
     }
@@ -257,10 +304,18 @@ public class CreateLevers : MonoBehaviour
 
     IEnumerator SetInfiniteScoreText()
     {
-        infiniteScoreText.SetText("Score: " + scoreOB.score);
-        if (int.Parse(scoreOB.score) > int.Parse(scoreOB.topScore))
+        int score = int.Parse(scoreOB.score);
+        int topScore = int.Parse(scoreOB.topScore);
+        if(score > 0)
         {
-            topInfiniteScoreText.SetText("Top score: " + scoreOB.score);
+            infiniteScoreText.SetText("Score: " + score);
+        } else
+        {
+            infiniteScoreText.SetText("Score: 0");
+        }
+        if (score > topScore)
+        {
+            topInfiniteScoreText.SetText("Top score: " + score);
         }
         yield return new WaitForSeconds(0.1f);
         StartCoroutine(SetInfiniteScoreText());
