@@ -12,6 +12,10 @@ public class CreateLevers : MonoBehaviour
     //Lights
     public Light directionalLight;
 
+    //Reflections
+    public Cubemap texture;
+    public Material black;
+
     //Ball properties
     public GameObject ball;
     private Rigidbody ballrb;
@@ -127,6 +131,7 @@ public class CreateLevers : MonoBehaviour
 
         isHorizontalMode = PlayerPrefs.GetString("isHorizontalMode", "false");
 
+
         isNightMode = PlayerPrefs.GetString("isNightMode", "false");
         if (isNightMode == "true")
         {
@@ -136,12 +141,11 @@ public class CreateLevers : MonoBehaviour
             ball.GetComponent<MeshRenderer>().material = ballColorMaterial;
             directionalLight.enabled = false;
             RenderSettings.skybox = nightSkybox;
-            
+
         } else
         {
+            //instantiate lever for regular mode.
             leverPrefab = dayModeLeverPrefab;
-            /// Leave default skybox; // inaccessible?
-            /// No need to set daytime parameters since they're default
         }
 
         isEasyMode = PlayerPrefs.GetString("isEasyMode", "false");

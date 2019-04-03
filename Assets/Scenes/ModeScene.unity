@@ -32,7 +32,7 @@ RenderSettings:
   m_FlareFadeSpeed: 3
   m_HaloTexture: {fileID: 0}
   m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
-  m_DefaultReflectionMode: 0
+  m_DefaultReflectionMode: 1
   m_DefaultReflectionResolution: 128
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
@@ -705,6 +705,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: {fileID: 11400000, guid: 51fa42074aa02004a9ef17dedcb7c1a6, type: 2}
   directionalLight: {fileID: 170076734}
+  texture: {fileID: 8900000, guid: 27ebdca7ac427914e8932c8b3690c42b, type: 2}
+  black: {fileID: 2100000, guid: 01528a464bf12d2418774ae589bc8bbb, type: 2}
   ball: {fileID: 248369877}
   dayModeBallColorMaterial: {fileID: 2100000, guid: 9d35b214652d13f47a7b30e2330c7751,
     type: 2}
@@ -2318,7 +2320,7 @@ PrefabInstance:
     - target: {fileID: 7863331666611693007, guid: 5c0badb4f57beff43b9f222e4c32f6b4,
         type: 3}
       propertyPath: m_Mass
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7863331666611693007, guid: 5c0badb4f57beff43b9f222e4c32f6b4,
         type: 3}
