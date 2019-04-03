@@ -108,7 +108,7 @@ public class CreateLevers : MonoBehaviour
         }
         else
         {
-            ballPhysicMaterial.bounciness = 0.35f;
+            ballPhysicMaterial.bounciness = 0.45f;
         }
 
         isGravityInverted = PlayerPrefs.GetString("isGravityInverted", "false");
@@ -254,7 +254,8 @@ public class CreateLevers : MonoBehaviour
                     leverArray[i].transform.Rotate(randomControlArrayIndex * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
                 } else
                 {
-                    leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                    // * by torqueModeMultiplier 
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * rotationInput * rotationSpeedArrayIndex * torqueModeMultiplier * Time.deltaTime);
                 }
             }
             else if (isControlRandom == "true")
@@ -274,7 +275,8 @@ public class CreateLevers : MonoBehaviour
                     leverArray[i].transform.Rotate(rotationPref * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
                 } else
                 {
-                    leverArray[i].GetComponent<Rigidbody>().AddTorque(rotationPref * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                    // * by torqueModeMultiplier 
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(rotationPref * rotationInput * rotationSpeedArrayIndex * torqueModeMultiplier * Time.deltaTime);
                 }
             }
             else
