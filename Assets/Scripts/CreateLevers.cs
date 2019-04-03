@@ -24,7 +24,7 @@ public class CreateLevers : MonoBehaviour
     public GameObject dayModeLeverPrefab;
     public GameObject nightModeLeverPrefab;
     private GameObject leverPrefab;
-    private GameObject[] leverArray = new GameObject[5];
+    private GameObject[] leverArray = new GameObject[8];
 
     private Vector3 leverPos;
     private Quaternion leverRot = Quaternion.Euler(0, 0, 0);
@@ -48,13 +48,13 @@ public class CreateLevers : MonoBehaviour
     public PhysicMaterial ballPhysicMaterial;
 
     private float rotationSpeed;
-    private float[] rotationspeedArray = new float[5];
+    private float[] rotationspeedArray = new float[8];
     private string isLeverSpeedRandom;
     private float rotationInput;
     // Rotation Controls
     private string isControlInverted;
     private string isControlRandom;
-    private Vector3[] randomControlArray = new Vector3[5];
+    private Vector3[] randomControlArray = new Vector3[8];
     private Vector3 rotationPref;
 
     // Variables for mobile input calculations
@@ -157,8 +157,8 @@ public class CreateLevers : MonoBehaviour
         scoreOB.score = "0";
 
         //Set conditional based on boolean manager
-        if (isModeInfinite == "true") { numberOfLevers = 5; }
-        else { numberOfLevers = 5; } 
+        if (isModeInfinite == "true") { numberOfLevers = 8; }
+        else { numberOfLevers = 8; } 
 /// set to gamemode specific number later from separate script.
 
         initialBallPosition = new Vector2(ball.transform.position.x, ball.transform.position.y);
@@ -208,12 +208,6 @@ public class CreateLevers : MonoBehaviour
             SetLeverSpacingAndColumn();
             leverRot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f));
         }
-    }
-
-    public void FixedUpdate()
-    {
-        //Debug.Log(ballrb.velocity);
-        //Debug.Log();
     }
 
     public void Update()
@@ -342,7 +336,7 @@ public class CreateLevers : MonoBehaviour
     {
         if(isHorizontalMode == "true")
         {
-            ///edit distance buffer later (10)
+///edit distance buffer later (10)
             if(leverArray[0].transform.position.x < ball.transform.position.x - 10)
             {
                 SetupNextLever();
@@ -406,7 +400,7 @@ public class CreateLevers : MonoBehaviour
 
     IEnumerator CheckBounds()
     {
-        if ((ball.transform.position.x > 5 || ball.transform.position.x < -5) && isHorizontalMode != "true")
+        if ((ball.transform.position.x > 4.0f || ball.transform.position.x < -4.0f) && isHorizontalMode != "true")
         {
             state.SaveAndReloadScene();
         }
@@ -414,14 +408,15 @@ public class CreateLevers : MonoBehaviour
         {
             if (isGravityInverted != "true")
             {
-                if (ball.transform.position.y < leverArray[leverArray.Length - 1].transform.position.y)
+///Add distance buffer variable later (5)
+                if (ball.transform.position.y < -ball.transform.position.x - 5)
                 {
                     state.SaveAndReloadScene();
                 }
             }
             else
             {
-                if (ball.transform.position.y > leverArray[leverArray.Length - 1].transform.position.y)
+                if (ball.transform.position.y > ball.transform.position.x + 5)
                 {
                     state.SaveAndReloadScene();
                 }
