@@ -1,1 +1,2 @@
 *.shader linguist-vendored=false
+*.cginc linguist-vendored=false
