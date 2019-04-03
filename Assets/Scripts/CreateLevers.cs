@@ -158,7 +158,8 @@ public class CreateLevers : MonoBehaviour
 
         //Set conditional based on boolean manager
         if (isModeInfinite == "true") { numberOfLevers = 5; }
-        else { numberOfLevers = 5; } /// set to gamemode specific number later from separate script.
+        else { numberOfLevers = 5; } 
+/// set to gamemode specific number later from separate script.
 
         initialBallPosition = new Vector2(ball.transform.position.x, ball.transform.position.y);
 
@@ -217,14 +218,10 @@ public class CreateLevers : MonoBehaviour
 
     public void Update()
     {
-///update lever handling to use torque
-
         /* Handle Desktop and mobile input to turn the levers with similar inertia.
         * Is there really no way to simulate buttonpresses for the engine inputs? Seriously?
         * The code has to be somewhere. At least we have the CPIM now. Where would I be without that?
         */
-        // And this is all garbage now because I need to use torque instead of rotation to fix the physics XD
-        // This is what I get for being a genius.
         rotationInput = Input.GetAxis("Horizontal");
         if (Application.platform == RuntimePlatform.Android)
         {
@@ -345,7 +342,7 @@ public class CreateLevers : MonoBehaviour
     {
         if(isHorizontalMode == "true")
         {
-            //edit buffer later (10)
+            ///edit distance buffer later (10)
             if(leverArray[0].transform.position.x < ball.transform.position.x - 10)
             {
                 SetupNextLever();
