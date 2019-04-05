@@ -6,6 +6,7 @@ using TMPro;
 
 public class CreateLevers : MonoBehaviour
 {
+    // Custom classes
     public StateManager state;
     public InputManager input;
     public Ball ball;
@@ -27,8 +28,6 @@ public class CreateLevers : MonoBehaviour
     // Array for assigning random rotation speeds dynamically
     private float[] rotationspeedArray = new float[8];
 
-    // Rotation inversion preference in Vector3 form for proper multiplication
-    private Vector3 rotationPref;
     // Array for assigning random rotation inversion dynamically
     private Vector3[] randomControlArray = new Vector3[8];
 
@@ -45,8 +44,6 @@ public class CreateLevers : MonoBehaviour
     {
         // Clear top score on start for testing
         //PlayerPrefs.DeleteKey("topInfiniteScore");
-
-        rotationPref = state.isControlInverted == "true" ? Vector3.forward : -Vector3.forward;
 
         if (state.isGravityInverted == "true")
         {
@@ -139,22 +136,22 @@ public class CreateLevers : MonoBehaviour
             {
                 if(state.isEasyMode == "true")
                 {
-                    leverArray[i].transform.Rotate(rotationPref * input.rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                    leverArray[i].transform.Rotate(input.rotationPref * input.rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
                 } else
                 {
                     // * by torqueModeMultiplier 
-                    leverArray[i].GetComponent<Rigidbody>().AddTorque(rotationPref * input.rotationInput * rotationSpeedArrayIndex * input.torqueModeMultiplier * Time.deltaTime);
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(input.rotationPref * input.rotationInput * rotationSpeedArrayIndex * input.torqueModeMultiplier * Time.deltaTime);
                 }
             }
             else
             {
                 if(state.isEasyMode == "true")
                 {
-                    leverArray[i].transform.Rotate(rotationPref * input.rotationInput * input.rotationSpeed * Time.deltaTime);
+                    leverArray[i].transform.Rotate(input.rotationPref * input.rotationInput * input.rotationSpeed * Time.deltaTime);
                 }
                 else
                 {
-                    leverArray[i].GetComponent<Rigidbody>().AddTorque(rotationPref * input.rotationInput * input.rotationSpeed * Time.deltaTime);
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(input.rotationPref * input.rotationInput * input.rotationSpeed * Time.deltaTime);
                 }
             }
         }

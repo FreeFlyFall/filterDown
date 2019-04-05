@@ -9,8 +9,13 @@ public class InputManager : MonoBehaviour
 
     // Sensitivity
     [HideInInspector] public float rotationSpeed;
+
     // left and right rotaiotn input, -1 to +1, respectively
     [HideInInspector] public float rotationInput;
+
+    // Rotation inversion preference in Vector3 form for proper multiplication
+    [HideInInspector] public Vector3 rotationPref;
+
     // Variables for mobile input calculations
     static float lerpUpT = 0.0f;
     static float lerpDownT = 0.0f;
@@ -22,6 +27,7 @@ public class InputManager : MonoBehaviour
     void Start()
     {
         SetSens();
+        rotationPref = state.isControlInverted == "true" ? Vector3.forward : -Vector3.forward;
     }
 
     // Update is called once per frame
