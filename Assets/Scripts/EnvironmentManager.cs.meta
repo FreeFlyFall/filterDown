@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f0fef35ab12ca6a4d827cef68bb11c35
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - directionalLight: {instanceID: 0}
+  - nightSkybox: {instanceID: 0}
+  - state: {fileID: 11400000, guid: 51fa42074aa02004a9ef17dedcb7c1a6, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

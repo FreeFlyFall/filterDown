@@ -46,7 +46,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
-        ScoreSO.RecordScore(scoreOB.score, scoreOB.topScore);
+        scoreOB.RecordScore(scoreOB.score, scoreOB.topScore);
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;

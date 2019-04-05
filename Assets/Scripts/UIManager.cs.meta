@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9899814dda5f88249b81c0df7224e594
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - infiniteScoreText: {instanceID: 0}
+  - scoreOB: {fileID: 11400000, guid: 6a14d208104844c42827fec5b998ea59, type: 2}
+  - topInfiniteScoreText: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

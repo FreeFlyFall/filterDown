@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 2aafb4cab8c58ef45b62a448d113ed6f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - state: {fileID: 11400000, guid: 51fa42074aa02004a9ef17dedcb7c1a6, type: 2}
+  - scoreOB: {fileID: 11400000, guid: 6a14d208104844c42827fec5b998ea59, type: 2}
+  - rb: {instanceID: 0}
+  - nightModeColorMaterial: {instanceID: 0}
+  - physicMaterial: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

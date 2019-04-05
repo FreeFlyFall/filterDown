@@ -3,83 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
-using UnityStandardAssets.CrossPlatformInput;
 
 public class CreateLevers : MonoBehaviour
 {
     public StateManager state;
+    public InputManager input;
+    public Ball ball;
 
-    //Lights
-    public Light directionalLight;
-
-    //Reflections
-    public Cubemap texture;
-    public Material black;
-
-    //Ball properties
-    public GameObject ball;
-    private Rigidbody ballrb;
-    private Vector2 initialBallPosition;
-    public Material dayModeBallColorMaterial;
-    public Material nightModeBallColorMaterial;
-    private Material ballColorMaterial;
-
-    //Lever properties
+    // Lever dec&def
     public GameObject dayModeLeverPrefab;
     public GameObject nightModeLeverPrefab;
     private GameObject leverPrefab;
     private GameObject[] leverArray = new GameObject[8];
-
     private Vector3 leverPos;
     private Quaternion leverRot = Quaternion.Euler(0, 0, 0);
-
-    private int numberOfLevers;
+    private int numberOfLevers; // is set to 8 below
     private bool isColumn1 = true;
 
-    //Score properties
-    public TextMeshProUGUI infiniteScoreText;
-    [SerializeField] private ScoreSO scoreOB;
-    public TextMeshProUGUI topInfiniteScoreText;
-
-    //GameSettings
-    private string isModeInfinite;
-
-    private string isSpacingFar;
+    // Lever spacings
     private int regSpacing;
     private int farSpacing;
-
-    private string isBouncy;
-    public PhysicMaterial ballPhysicMaterial;
-
-    private float rotationSpeed;
+    
+    // Array for assigning random rotation speeds dynamically
     private float[] rotationspeedArray = new float[8];
-    private string isLeverSpeedRandom;
-    private float rotationInput;
-    // Rotation Controls
-    private string isControlInverted;
-    private string isControlRandom;
-    private Vector3[] randomControlArray = new Vector3[8];
+
+    // Rotation inversion preference in Vector3 form for proper multiplication
     private Vector3 rotationPref;
+    // Array for assigning random rotation inversion dynamically
+    private Vector3[] randomControlArray = new Vector3[8];
 
-    // Variables for mobile input calculations
-    static float lerpUpT = 0.0f;
-    static float lerpDownT = 0.0f;
-    private float lastPressedMobileInputValue = 0.0f;
-    private float customInputGravity = 7.0f;
-
-    private string isGravityInverted;
+    // Buffers for lever deletion based on ball positioning
     private float leverDeleteBuffer;
 
-    private string isHorizontalMode;
-
-    private string isNightMode;
-    public Material nightSkybox;
-
-    private string isEasyMode;// = "false";
-    private float torqueModeMultiplier = 50000.0f;
-    //3999999 - ~9999999 should be a good result for rotationSpeed
-
-    //Return custom range for lever rotation speed
+    //Return random from within custom range for lever rotation speed
     private float GetRandomLeverSpeed()
     {
         return Random.Range(80, 230);
@@ -87,32 +43,12 @@ public class CreateLevers : MonoBehaviour
 
     void Start()
     {
-        //Clear top score on start for testing
+        // Clear top score on start for testing
         //PlayerPrefs.DeleteKey("topInfiniteScore");
 
-        //Set Unlockable Bools
-        isModeInfinite = PlayerPrefs.GetString("isModeInfinite", "true");
+        rotationPref = state.isControlInverted == "true" ? Vector3.forward : -Vector3.forward;
 
-        isControlInverted = PlayerPrefs.GetString("isControlInverted", "false");
-        rotationPref = isControlInverted == "true" ? Vector3.forward : -Vector3.forward;
-        isControlRandom = PlayerPrefs.GetString("isControlRandom", "false");
-
-        isLeverSpeedRandom = PlayerPrefs.GetString("isLeverSpeedRandom", "false");
-
-        isSpacingFar = PlayerPrefs.GetString("isSpacingFar", "false");
-
-        isBouncy = PlayerPrefs.GetString("isBouncy", "false");
-        if (isBouncy == "true")
-        {
-            ballPhysicMaterial.bounciness = 0.8f;
-        }
-        else
-        {
-            ballPhysicMaterial.bounciness = 0.45f;
-        }
-
-        isGravityInverted = PlayerPrefs.GetString("isGravityInverted", "false");
-        if (isGravityInverted == "true")
+        if (state.isGravityInverted == "true")
         {
             leverPos = new Vector3(-2, 4, 0);
             Physics.gravity = new Vector3(0, 9.81f, 0);
@@ -129,71 +65,27 @@ public class CreateLevers : MonoBehaviour
             leverDeleteBuffer = 10.0f;
         }
 
-        isHorizontalMode = PlayerPrefs.GetString("isHorizontalMode", "false");
-
-
-        isNightMode = PlayerPrefs.GetString("isNightMode", "false");
-        if (isNightMode == "true")
+        if (state.isNightMode == "true")
         {
             leverPrefab = nightModeLeverPrefab;
-            // Set ball color
-            ballColorMaterial = nightModeBallColorMaterial;
-            ball.GetComponent<MeshRenderer>().material = ballColorMaterial;
-            directionalLight.enabled = false;
-            RenderSettings.skybox = nightSkybox;
-
         } else
         {
-            //instantiate lever for regular mode.
+            // lever for regular mode.
             leverPrefab = dayModeLeverPrefab;
         }
 
-        isEasyMode = PlayerPrefs.GetString("isEasyMode", "false");
-        // end unlockable bools
-
-        SetSens();
-
-        // Set score UI
-        scoreOB.topScore = PlayerPrefs.GetString("topInfiniteScore", "0");
-        topInfiniteScoreText.SetText("Top score: " + scoreOB.topScore);
-
-        // Initialize score scriptable object score
-        scoreOB.score = "0";
-
-        //Set conditional based on boolean manager
-        if (isModeInfinite == "true") { numberOfLevers = 8; }
+        // Set conditional based on boolean manager
+        if (state.isModeInfinite == "true") { numberOfLevers = 8; }
+/// set to gamemode specific number later.
         else { numberOfLevers = 8; } 
-/// set to gamemode specific number later from separate script.
-
-        initialBallPosition = new Vector2(ball.transform.position.x, ball.transform.position.y);
 
         PlaceInitialLevers();
 
-        // Add small force at game start to prevent physics bug when stopping on level lever
-        ballrb = ball.GetComponent<Rigidbody>();
-        ballrb.AddForce(transform.right, ForceMode.Impulse);
-
-        // Start tracking ininite game mode score
-        StartCoroutine(SetInfiniteScoreText());
-        // Start checking for out of bounds
-        StartCoroutine(CheckBounds());
         // Start checking conditionals for lever state changes
         StartCoroutine(CheckNextLever());
-
-        StartCoroutine(ChangeScore());
     }
 
-    public void SetSens()
-    {
-        if(isEasyMode != "true")
-        {
-            rotationSpeed = PlayerPrefs.GetFloat("rotationSpeed", 130f) * torqueModeMultiplier;
-        } else
-        {
-            rotationSpeed = PlayerPrefs.GetFloat("rotationSpeed", 130f);
-        }
-        
-    }
+
 
     // Initialize levers in scene
     private void PlaceInitialLevers()
@@ -205,7 +97,7 @@ public class CreateLevers : MonoBehaviour
             newLever.transform.rotation = leverRot;
             leverArray[i] = newLever;
             rotationspeedArray[i] = GetRandomLeverSpeed();
-            if (isControlRandom == "true")
+            if (state.isControlRandom == "true")
             {
                 randomControlArray[i] = Random.Range(0f, 1f) >= 0.5f ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
             }
@@ -216,131 +108,62 @@ public class CreateLevers : MonoBehaviour
 
     public void Update()
     {
-        /* Handle Desktop and mobile input to turn the levers with similar inertia.
-        * Is there really no way to simulate buttonpresses for the engine inputs? Seriously?
-        * The code has to be somewhere. At least we have the CPIM now. Where would I be without that?
-        */
-        rotationInput = Input.GetAxis("Horizontal");
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            if (CrossPlatformInputManager.GetButton("a") == true)
-            {
-                lerpDownT = 0f;
-                SetCustomMobileInputVariables(-1f);
-                lerpUpT += customInputGravity * Time.deltaTime;
-            }
-            else if (CrossPlatformInputManager.GetButton("d") == true)
-            {
-                lerpDownT = 0f;
-                SetCustomMobileInputVariables(1f);
-                lerpUpT += customInputGravity * Time.deltaTime;
-            }
-            if (CrossPlatformInputManager.GetButton("a") == false && CrossPlatformInputManager.GetButton("d") == false)
-            {
-                lerpUpT = 0f;
-                rotationInput = Mathf.Lerp(lastPressedMobileInputValue, 0f, lerpDownT);
-                lerpDownT += customInputGravity * Time.deltaTime;
-            }
-        }
+///Organize
         //rotate each lever in the array for the initial levers
         for (int i = 0; i < leverArray.Length; i++)
         {
             float rotationSpeedArrayIndex = rotationspeedArray[i];
             Vector3 randomControlArrayIndex = randomControlArray[i];
-            if (isControlRandom == "true" && isLeverSpeedRandom == "true")
+            if (state.isControlRandom == "true" && state.isLeverSpeedRandom == "true")
             {
-                if(isEasyMode == "true")
+                if(state.isEasyMode == "true")
                 {
-                    leverArray[i].transform.Rotate(randomControlArrayIndex * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                    leverArray[i].transform.Rotate(randomControlArrayIndex * input.rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
                 } else
                 {
                     // * by torqueModeMultiplier 
-                    leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * rotationInput * rotationSpeedArrayIndex * torqueModeMultiplier * Time.deltaTime);
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * input.rotationInput * rotationSpeedArrayIndex * input.torqueModeMultiplier * Time.deltaTime);
                 }
             }
-            else if (isControlRandom == "true")
+            else if (state.isControlRandom == "true")
             {
-                if(isEasyMode == "true")
+                if(state.isEasyMode == "true")
                 {
-                    leverArray[i].transform.Rotate(randomControlArrayIndex * rotationInput * rotationSpeed * Time.deltaTime);
+                    leverArray[i].transform.Rotate(randomControlArrayIndex * input.rotationInput * input.rotationSpeed * Time.deltaTime);
                 } else
                 {
-                    leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * rotationInput * rotationSpeed * Time.deltaTime);
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * input.rotationInput * input.rotationSpeed * Time.deltaTime);
                 }
             }
-            else if (isLeverSpeedRandom == "true")
+            else if (state.isLeverSpeedRandom == "true")
             {
-                if(isEasyMode == "true")
+                if(state.isEasyMode == "true")
                 {
-                    leverArray[i].transform.Rotate(rotationPref * rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                    leverArray[i].transform.Rotate(rotationPref * input.rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
                 } else
                 {
                     // * by torqueModeMultiplier 
-                    leverArray[i].GetComponent<Rigidbody>().AddTorque(rotationPref * rotationInput * rotationSpeedArrayIndex * torqueModeMultiplier * Time.deltaTime);
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(rotationPref * input.rotationInput * rotationSpeedArrayIndex * input.torqueModeMultiplier * Time.deltaTime);
                 }
             }
             else
             {
-                if(isEasyMode == "true")
+                if(state.isEasyMode == "true")
                 {
-                    leverArray[i].transform.Rotate(rotationPref * rotationInput * rotationSpeed * Time.deltaTime);
+                    leverArray[i].transform.Rotate(rotationPref * input.rotationInput * input.rotationSpeed * Time.deltaTime);
                 }
                 else
                 {
-                    leverArray[i].GetComponent<Rigidbody>().AddTorque(rotationPref * rotationInput * rotationSpeed * Time.deltaTime);
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(rotationPref * input.rotationInput * input.rotationSpeed * Time.deltaTime);
                 }
             }
         }
-    }
-
-    void SetCustomMobileInputVariables(float horizontalInput)
-    {
-        rotationInput = Mathf.Lerp(0.0f, horizontalInput, lerpUpT);
-        lastPressedMobileInputValue = horizontalInput;
-    }
-
-    IEnumerator SetInfiniteScoreText()
-    {
-        int score = int.Parse(scoreOB.score);
-        int topScore = int.Parse(scoreOB.topScore);
-        if(score > 0)
-        {
-            infiniteScoreText.SetText("Score: " + score);
-        } else
-        {
-            infiniteScoreText.SetText("Score: 0");
-        }
-        if (score > topScore)
-        {
-            topInfiniteScoreText.SetText("Top score: " + score);
-        }
-        yield return new WaitForSeconds(0.1f);
-        StartCoroutine(SetInfiniteScoreText());
-    }
-
-    IEnumerator ChangeScore()
-    {
-        if (isHorizontalMode == "true")
-        {
-            scoreOB.score = (ball.transform.position.x - initialBallPosition.x).ToString("0");
-        }
-        else if (isGravityInverted == "true")
-        {
-
-            scoreOB.score = (ball.transform.position.y - initialBallPosition.y).ToString("0");
-        }
-        else
-        {
-            scoreOB.score = (-ball.transform.position.y + initialBallPosition.y).ToString("0");
-        }
-        yield return new WaitForSeconds(0.1f);
-        StartCoroutine(ChangeScore());
     }
 
     // Create new data for lever positioning
     IEnumerator CheckNextLever()
     {
-        if(isHorizontalMode == "true")
+        if(state.isHorizontalMode == "true")
         {
 ///edit distance buffer later (10)
             if(leverArray[0].transform.position.x < ball.transform.position.x - 10)
@@ -348,7 +171,7 @@ public class CreateLevers : MonoBehaviour
                 SetupNextLever();
             }
         }
-        else if (isGravityInverted == "true")
+        else if (state.isGravityInverted == "true")
         {
             if (leverArray[0].transform.position.y < ball.transform.position.y + leverDeleteBuffer)
             {
@@ -391,7 +214,7 @@ public class CreateLevers : MonoBehaviour
     void SetLeverSpacingAndColumn()
     {
         if (isColumn1 == true) { leverPos.x += 4; }
-        else if (isHorizontalMode == "true")
+        else if (state.isHorizontalMode == "true")
         {
             leverPos.x += 4;
         }
@@ -400,35 +223,7 @@ public class CreateLevers : MonoBehaviour
             leverPos.x -= 4;
         }
         isColumn1 = !isColumn1;
-        if (isSpacingFar == "true") { leverPos.y -= farSpacing; }
+        if (state.isSpacingFar == "true") { leverPos.y -= farSpacing; }
         else { leverPos.y -= regSpacing; }
-    }
-
-    IEnumerator CheckBounds()
-    {
-        if ((ball.transform.position.x > 4.0f || ball.transform.position.x < -4.0f) && isHorizontalMode != "true")
-        {
-            state.SaveAndReloadScene();
-        }
-        else if (isHorizontalMode == "true")
-        {
-            if (isGravityInverted != "true")
-            {
-///Add distance buffer variable later (5)
-                if (ball.transform.position.y < -ball.transform.position.x - 5)
-                {
-                    state.SaveAndReloadScene();
-                }
-            }
-            else
-            {
-                if (ball.transform.position.y > ball.transform.position.x + 5)
-                {
-                    state.SaveAndReloadScene();
-                }
-            }
-        }
-        yield return new WaitForSeconds(1.0f);
-        StartCoroutine(CheckBounds());
     }
 }
