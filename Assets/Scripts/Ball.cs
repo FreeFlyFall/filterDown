@@ -8,7 +8,6 @@ public class Ball : MonoBehaviour
     public StateManager state;
     public ScoreSO scoreOB;
 
-    // Ball properties//move to ball script
     [HideInInspector] public Rigidbody rb;
     [HideInInspector] public Vector2 initialPosition;
     //public Material dayModeColorMaterial;
@@ -57,20 +56,21 @@ public class Ball : MonoBehaviour
         {
             if (state.isGravityInverted != "true")
             {
-                ///Add distance buffer variable later (5)
-                if (transform.position.y < -transform.position.x - 5)
+                if (transform.position.y < -transform.position.x - 5.0f)
                 {
                     state.SaveAndReloadScene();
                 }
             }
             else
             {
-                if (transform.position.y > transform.position.x + 5)
+                //Change level setup based on booleans to allow for the same buffer
+                if (transform.position.y > transform.position.x + 8.5f)
                 {
                     state.SaveAndReloadScene();
                 }
             }
         }
+            
         yield return new WaitForSeconds(1.0f);
         StartCoroutine(CheckBounds());
     }

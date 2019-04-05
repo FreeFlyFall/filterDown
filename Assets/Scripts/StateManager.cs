@@ -21,10 +21,10 @@ public class StateManager : ScriptableObject
 
     void Awake()
     {
-        SetStateBools();
+        SetBools();
     }
 
-    public void SetStateBools()
+    public void SetBools()
     {
         isModeInfinite = PlayerPrefs.GetString("isModeInfinite", "true");
         isSpacingFar = PlayerPrefs.GetString("isSpacingFar", "false");

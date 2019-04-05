@@ -821,6 +821,7 @@ MonoBehaviour:
   state: {fileID: 11400000, guid: 51fa42074aa02004a9ef17dedcb7c1a6, type: 2}
   rotationSpeed: 0
   rotationInput: 0
+  rotationPref: {x: 0, y: 0, z: 0}
   torqueModeMultiplier: 50000
 --- !u!4 &652427698
 Transform:
@@ -2407,7 +2408,7 @@ PrefabInstance:
     - target: {fileID: 6253692782845659630, guid: 5c0badb4f57beff43b9f222e4c32f6b4,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.66
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6253692782845659630, guid: 5c0badb4f57beff43b9f222e4c32f6b4,
         type: 3}

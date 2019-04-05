@@ -5,9 +5,9 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    // Score properties//move to UI script
-    public TextMeshProUGUI infiniteScoreText;
     [SerializeField] private ScoreSO scoreOB;
+
+    public TextMeshProUGUI infiniteScoreText;
     public TextMeshProUGUI topInfiniteScoreText;
 
     // Start is called before the first frame update
@@ -20,12 +20,6 @@ public class UIManager : MonoBehaviour
 
         // Set score UI
         topInfiniteScoreText.SetText("Top score: " + scoreOB.topScore);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     IEnumerator SetInfiniteScoreText()

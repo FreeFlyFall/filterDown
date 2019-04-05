@@ -5,6 +5,7 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class InputManager : MonoBehaviour
 {
+    //Custom classes
     [SerializeField] private StateManager state;
 
     // Sensitivity
@@ -16,7 +17,7 @@ public class InputManager : MonoBehaviour
     // Rotation inversion preference in Vector3 form for proper multiplication
     [HideInInspector] public Vector3 rotationPref;
 
-    // Variables for mobile input calculations
+    // Variables for mobile input smoothing calculations
     static float lerpUpT = 0.0f;
     static float lerpDownT = 0.0f;
     private float lastPressedMobileInputValue = 0.0f;
@@ -26,14 +27,17 @@ public class InputManager : MonoBehaviour
 
     void Start()
     {
+        state.SetBools();
         SetSens();
         rotationPref = state.isControlInverted == "true" ? Vector3.forward : -Vector3.forward;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        //Handle input for Desktop
         rotationInput = Input.GetAxis("Horizontal");
+
+        //Write over input for mobile
         if (Application.platform == RuntimePlatform.Android)
         {
             if (CrossPlatformInputManager.GetButton("a") == true)
@@ -57,6 +61,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Set player sensitivity based on PlayerPrefs and per mode
     public void SetSens()
     {
         if (state.isEasyMode != "true")
@@ -69,6 +74,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Abstracted for dryness
     void SetCustomMobileInputVariables(float horizontalInput)
     {
         rotationInput = Mathf.Lerp(0.0f, horizontalInput, lerpUpT);

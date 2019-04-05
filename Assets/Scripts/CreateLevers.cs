@@ -11,7 +11,7 @@ public class CreateLevers : MonoBehaviour
     public InputManager input;
     public Ball ball;
 
-    // Lever dec&def
+    // Lever related variable declaration and definition
     public GameObject dayModeLeverPrefab;
     public GameObject nightModeLeverPrefab;
     private GameObject leverPrefab;
@@ -31,8 +31,8 @@ public class CreateLevers : MonoBehaviour
     // Array for assigning random rotation inversion dynamically
     private Vector3[] randomControlArray = new Vector3[8];
 
-    // Buffers for lever deletion based on ball positioning
-    private float leverDeleteBuffer;
+    // Buffer for lever deletion based on ball positioning
+    private float leverDeleteBuffer = 10;
 
     //Return random from within custom range for lever rotation speed
     private float GetRandomLeverSpeed()
@@ -42,16 +42,17 @@ public class CreateLevers : MonoBehaviour
 
     void Start()
     {
+        state.SetBools();
         // Clear top score on start for testing
         //PlayerPrefs.DeleteKey("topInfiniteScore");
 
+        // Set physics, lever positioning, and spacing per gravity mode
         if (state.isGravityInverted == "true")
         {
             leverPos = new Vector3(-2, 4, 0);
             Physics.gravity = new Vector3(0, 9.81f, 0);
             regSpacing = -4;
             farSpacing = -6;
-            leverDeleteBuffer = -10.0f;
         }
         else
         {
@@ -59,9 +60,9 @@ public class CreateLevers : MonoBehaviour
             Physics.gravity = new Vector3(0, -9.81f, 0);
             regSpacing = 4;
             farSpacing = 6;
-            leverDeleteBuffer = 10.0f;
         }
 
+        // Use different prefab for lever per mode
         if (state.isNightMode == "true")
         {
             leverPrefab = nightModeLeverPrefab;
@@ -73,7 +74,7 @@ public class CreateLevers : MonoBehaviour
 
         // Set conditional based on boolean manager
         if (state.isModeInfinite == "true") { numberOfLevers = 8; }
-/// set to gamemode specific number later.
+/// set to gamemode specific number once finite mode is implemented
         else { numberOfLevers = 8; } 
 
         PlaceInitialLevers();
@@ -84,7 +85,7 @@ public class CreateLevers : MonoBehaviour
 
 
 
-    // Initialize levers in scene
+    // Initialize the first levers in the scene
     private void PlaceInitialLevers()
     {
         for (int i = 0; i < numberOfLevers; i++)
@@ -105,12 +106,13 @@ public class CreateLevers : MonoBehaviour
 
     public void Update()
     {
-///Organize
-        //rotate each lever in the array for the initial levers
+        // Rotate each lever in the array for the initial levers according to settings
         for (int i = 0; i < leverArray.Length; i++)
         {
             float rotationSpeedArrayIndex = rotationspeedArray[i];
             Vector3 randomControlArrayIndex = randomControlArray[i];
+
+            // According to player preferences, and the current mode, use either rotation or torque methods to rotate the lever
             if (state.isControlRandom == "true" && state.isLeverSpeedRandom == "true")
             {
                 if(state.isEasyMode == "true")
@@ -118,7 +120,6 @@ public class CreateLevers : MonoBehaviour
                     leverArray[i].transform.Rotate(randomControlArrayIndex * input.rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
                 } else
                 {
-                    // * by torqueModeMultiplier 
                     leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * input.rotationInput * rotationSpeedArrayIndex * input.torqueModeMultiplier * Time.deltaTime);
                 }
             }
@@ -139,7 +140,6 @@ public class CreateLevers : MonoBehaviour
                     leverArray[i].transform.Rotate(input.rotationPref * input.rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
                 } else
                 {
-                    // * by torqueModeMultiplier 
                     leverArray[i].GetComponent<Rigidbody>().AddTorque(input.rotationPref * input.rotationInput * rotationSpeedArrayIndex * input.torqueModeMultiplier * Time.deltaTime);
                 }
             }
@@ -157,20 +157,20 @@ public class CreateLevers : MonoBehaviour
         }
     }
 
-    // Create new data for lever positioning
+    // Generate new levers if conditions are met
     IEnumerator CheckNextLever()
     {
         if(state.isHorizontalMode == "true")
         {
 ///edit distance buffer later (10)
-            if(leverArray[0].transform.position.x < ball.transform.position.x - 10)
+            if(leverArray[0].transform.position.x < ball.transform.position.x - leverDeleteBuffer)
             {
                 SetupNextLever();
-            }
+            }            
         }
         else if (state.isGravityInverted == "true")
         {
-            if (leverArray[0].transform.position.y < ball.transform.position.y + leverDeleteBuffer)
+            if (leverArray[0].transform.position.y < ball.transform.position.y - leverDeleteBuffer)
             {
                 SetupNextLever();
             }
@@ -190,6 +190,7 @@ public class CreateLevers : MonoBehaviour
     {
         // Destroy first lever in array
         Destroy(leverArray[0]);
+///Debug.Log("destroyed");
         // Move levers and their properties down an index in the array
         for (int i = 0; i < leverArray.Length - 1; i++)
         {
