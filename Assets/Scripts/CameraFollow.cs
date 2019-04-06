@@ -7,7 +7,7 @@ public class CameraFollow : MonoBehaviour
     // Make sure the camera follow target's rigidbody interpolation is set to "interpolate" in the inspector
     public Transform target; 
 
-    private float smoothSpeed = 0.35f;
+    private float smoothSpeed = 0.45f;
     public Vector3 offset;
     private Vector3 zeroVelocity = Vector3.zero;
 

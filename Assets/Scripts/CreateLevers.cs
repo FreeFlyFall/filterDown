@@ -15,24 +15,27 @@ public class CreateLevers : MonoBehaviour
     public GameObject dayModeLeverPrefab;
     public GameObject nightModeLeverPrefab;
     private GameObject leverPrefab;
-    private GameObject[] leverArray = new GameObject[8];
+    private GameObject[] leverArray; // = new GameObject[5];
     private Vector3 leverPos;
     private Quaternion leverRot = Quaternion.Euler(0, 0, 0);
-    private int numberOfLevers; // is set to 8 below
+    private int numberOfLevers;
     private bool isColumn1 = true;
 
     // Lever spacings
     private int regSpacing;
     private int farSpacing;
-    
+
     // Array for assigning random rotation speeds dynamically
-    private float[] rotationspeedArray = new float[8];
+    private float[] rotationSpeedArray; // = new float[5];
 
     // Array for assigning random rotation inversion dynamically
-    private Vector3[] randomControlArray = new Vector3[8];
+    private Vector3[] controlArray; // = new Vector3[5];
 
     // Buffer for lever deletion based on ball positioning
     private float leverDeleteBuffer = 10;
+
+    // bool for determining column for pinball mode controls
+    public bool isLeftPin = true;
 
     //Return random from within custom range for lever rotation speed
     private float GetRandomLeverSpeed()
@@ -72,18 +75,30 @@ public class CreateLevers : MonoBehaviour
             leverPrefab = dayModeLeverPrefab;
         }
 
-        // Set conditional based on boolean manager
-        if (state.isModeInfinite == "true") { numberOfLevers = 8; }
-/// set to gamemode specific number once finite mode is implemented
-        else { numberOfLevers = 8; } 
+//        // Set conditional based on boolean manager
+//        if (state.isModeInfinite == "true") { numberOfLevers = 1000; }
+///// set to gamemode specific number once finite mode is implemented
+//        else { numberOfLevers = 1000; } 
+
+        if (state.isHorizontalMode == "true")
+        {
+            numberOfLevers = 350;
+            leverArray = new GameObject[350];
+            controlArray = new Vector3[350];
+            rotationSpeedArray = new float[350];
+        } else
+        {
+            leverArray = new GameObject[10];
+            controlArray = new Vector3[10];
+            rotationSpeedArray = new float[10];
+            numberOfLevers = 10;
+        }
 
         PlaceInitialLevers();
 
         // Start checking conditionals for lever state changes
         StartCoroutine(CheckNextLever());
     }
-
-
 
     // Initialize the first levers in the scene
     private void PlaceInitialLevers()
@@ -94,13 +109,27 @@ public class CreateLevers : MonoBehaviour
             newLever.transform.position = leverPos;
             newLever.transform.rotation = leverRot;
             leverArray[i] = newLever;
-            rotationspeedArray[i] = GetRandomLeverSpeed();
+            rotationSpeedArray[i] = GetRandomLeverSpeed();
+
+            if (state.isPinballControl == "true")
+            {
+                if (isLeftPin == true)
+                {
+                    controlArray[i] = input.rotationPref;
+                    isLeftPin = false;
+                } else
+                {
+                    controlArray[i] = -input.rotationPref;
+                    isLeftPin = true;
+                }
+            }
             if (state.isControlRandom == "true")
             {
-                randomControlArray[i] = Random.Range(0f, 1f) >= 0.5f ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
+                controlArray[i] = Random.Range(0f, 1f) >= 0.5f ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
             }
+
             SetLeverSpacingAndColumn();
-            leverRot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f));
+            leverRot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f)); //(0, 0, -45); for -1 slope testing
         }
     }
 
@@ -109,28 +138,28 @@ public class CreateLevers : MonoBehaviour
         // Rotate each lever in the array for the initial levers according to settings
         for (int i = 0; i < leverArray.Length; i++)
         {
-            float rotationSpeedArrayIndex = rotationspeedArray[i];
-            Vector3 randomControlArrayIndex = randomControlArray[i];
+            float rotationSpeedArrayIndex = rotationSpeedArray[i];
+            Vector3 controlArrayIndex = controlArray[i];
 
             // According to player preferences, and the current mode, use either rotation or torque methods to rotate the lever
-            if (state.isControlRandom == "true" && state.isLeverSpeedRandom == "true")
+            if (state.isControlRandom == "true" && state.isLeverSpeedRandom == "true" || state.isLeverSpeedRandom == "true" && state.isPinballControl == "true")
             {
                 if(state.isEasyMode == "true")
                 {
-                    leverArray[i].transform.Rotate(randomControlArrayIndex * input.rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
+                    leverArray[i].transform.Rotate(controlArrayIndex * input.rotationInput * rotationSpeedArrayIndex * Time.deltaTime);
                 } else
                 {
-                    leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * input.rotationInput * rotationSpeedArrayIndex * input.torqueModeMultiplier * Time.deltaTime);
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(controlArrayIndex * input.rotationInput * rotationSpeedArrayIndex * input.torqueModeMultiplier * Time.deltaTime);
                 }
             }
-            else if (state.isControlRandom == "true")
+            else if (state.isControlRandom == "true" || state.isPinballControl == "true")
             {
                 if(state.isEasyMode == "true")
                 {
-                    leverArray[i].transform.Rotate(randomControlArrayIndex * input.rotationInput * input.rotationSpeed * Time.deltaTime);
+                    leverArray[i].transform.Rotate(controlArrayIndex * input.rotationInput * input.rotationSpeed * Time.deltaTime);
                 } else
                 {
-                    leverArray[i].GetComponent<Rigidbody>().AddTorque(randomControlArrayIndex * input.rotationInput * input.rotationSpeed * Time.deltaTime);
+                    leverArray[i].GetComponent<Rigidbody>().AddTorque(controlArrayIndex * input.rotationInput * input.rotationSpeed * Time.deltaTime);
                 }
             }
             else if (state.isLeverSpeedRandom == "true")
@@ -162,8 +191,8 @@ public class CreateLevers : MonoBehaviour
     {
         if(state.isHorizontalMode == "true")
         {
-///edit distance buffer later (10)
-            if(leverArray[0].transform.position.x < ball.transform.position.x - leverDeleteBuffer)
+///edit distance buffer later specifically for horizontal mode (10)
+            if(leverArray[0].transform.position.x < ball.transform.position.x - (leverDeleteBuffer + 10))
             {
                 SetupNextLever();
             }            
@@ -195,17 +224,33 @@ public class CreateLevers : MonoBehaviour
         for (int i = 0; i < leverArray.Length - 1; i++)
         {
             leverArray[i] = leverArray[i + 1];
-            rotationspeedArray[i] = rotationspeedArray[i + 1];
-            randomControlArray[i] = randomControlArray[i + 1];
+            rotationSpeedArray[i] = rotationSpeedArray[i + 1];
+            controlArray[i] = controlArray[i + 1];
         }
-        // Create new lever at end of array
-        leverRot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f));
+        // Create new lever at end of array with proper settings
+        leverRot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f)); //(0, 0, -45); for -1 slope testing
         GameObject newLever = Instantiate(leverPrefab) as GameObject;
         newLever.transform.position = leverPos;
         newLever.transform.rotation = leverRot;
         leverArray[leverArray.Length - 1] = newLever;
-        rotationspeedArray[rotationspeedArray.Length - 1] = GetRandomLeverSpeed();
-        randomControlArray[randomControlArray.Length - 1] = Random.Range(0f, 1f) >= 0.5f ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
+        rotationSpeedArray[rotationSpeedArray.Length - 1] = GetRandomLeverSpeed();
+        if (state.isPinballControl == "true")
+        {
+            if (isLeftPin == true)
+            {
+                controlArray[controlArray.Length - 1] = input.rotationPref;
+                isLeftPin = false;
+            }
+            else
+            {
+                controlArray[controlArray.Length - 1] = -input.rotationPref;
+                isLeftPin = true;
+            }
+        }
+        if (state.isControlRandom == "true")
+        {
+            controlArray[controlArray.Length - 1] = Random.Range(0f, 1f) >= 0.5f ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
+        }
         SetLeverSpacingAndColumn();
     }
 

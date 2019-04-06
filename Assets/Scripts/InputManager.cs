@@ -25,7 +25,7 @@ public class InputManager : MonoBehaviour
     [HideInInspector] public float torqueModeMultiplier = 50000.0f;
     // 3999999 - ~9999999 should be a good result for rotationSpeed
 
-    void Start()
+    void Awake()
     {
         state.SetBools();
         SetSens();

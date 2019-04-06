@@ -15,11 +15,12 @@ public class UnlockablesMenu : MonoBehaviour
     public Toggle horizontalMode;
     public Toggle neonNightMode;
     public Toggle easyMode;
+    public Toggle PinballMode;
 
 
     void Start()
     {
-        infiniteModeToggle.isOn = (PlayerPrefs.GetString("isModeInfinite", "false") == "true") ? true : false;
+        infiniteModeToggle.isOn = (PlayerPrefs.GetString("isModeInfinite", "true") == "true") ? true : false;
         invertedControlsToggle.isOn = (PlayerPrefs.GetString("isControlInverted", "false") == "true") ? true : false;
         randomRotationSpeedToggle.isOn = (PlayerPrefs.GetString("isLeverSpeedRandom", "false") == "true") ? true : false;
         farLeverSpacingToggle.isOn = (PlayerPrefs.GetString("isSpacingFar", "false") == "true") ? true : false;
@@ -29,6 +30,7 @@ public class UnlockablesMenu : MonoBehaviour
         horizontalMode.isOn = (PlayerPrefs.GetString("isHorizontalMode", "false") == "true") ? true : false;
         neonNightMode.isOn = (PlayerPrefs.GetString("isNightMode", "false") == "true") ? true : false;
         easyMode.isOn = (PlayerPrefs.GetString("isEasyMode", "false") == "true") ? true : false;
+        PinballMode.isOn = (PlayerPrefs.GetString("isPinballControl", "false") == "true") ? true : false;
     }
 
     public void StoreToggleBool(string booleanName, bool isToggled)
@@ -79,5 +81,9 @@ public class UnlockablesMenu : MonoBehaviour
     public void SetEasyModeToggle(bool isToggled)
     {
         StoreToggleBool("isEasyMode", isToggled);
+    }
+    public void SetPinballModeToggle(bool isToggled)
+    {
+        StoreToggleBool("isPinballControl", isToggled);
     }
 }

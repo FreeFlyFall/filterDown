@@ -18,6 +18,7 @@ public class StateManager : ScriptableObject
     public string isHorizontalMode { get; set; }
     public string isNightMode { get; set; }
     public string isEasyMode { get; set; }
+    public string isPinballControl { get; set; }
 
     void Awake()
     {
@@ -36,6 +37,7 @@ public class StateManager : ScriptableObject
         isHorizontalMode = PlayerPrefs.GetString("isHorizontalMode", "false");
         isNightMode = PlayerPrefs.GetString("isNightMode", "false");
         isEasyMode = PlayerPrefs.GetString("isEasyMode", "false");
+        isPinballControl = PlayerPrefs.GetString("isPinballControl", "false");
     }
 
     public void SaveAndReloadScene()
