@@ -16,7 +16,9 @@ public class StateManager : ScriptableObject
     public string isControlRandom { get; set; }
     public string isGravityInverted { get; set; }
     public string isHorizontalMode { get; set; }
-    public string isNightMode { get; set; }
+    public string isNightModeGreen { get; set; }
+    public string isNightModeBlue { get; set; }
+    public string isNightModeRed { get; set; }
     public string isEasyMode { get; set; }
     public string isPinballControl { get; set; }
 
@@ -35,7 +37,9 @@ public class StateManager : ScriptableObject
         isBouncy = PlayerPrefs.GetString("isBouncy", "false");
         isGravityInverted = PlayerPrefs.GetString("isGravityInverted", "false");
         isHorizontalMode = PlayerPrefs.GetString("isHorizontalMode", "false");
-        isNightMode = PlayerPrefs.GetString("isNightMode", "false");
+        isNightModeGreen = PlayerPrefs.GetString("isNightModeGreen", "false");
+        isNightModeBlue = PlayerPrefs.GetString("isNightModeBlue", "false");
+        isNightModeRed = PlayerPrefs.GetString("isNightModeRed", "false");
         isEasyMode = PlayerPrefs.GetString("isEasyMode", "false");
         isPinballControl = PlayerPrefs.GetString("isPinballControl", "false");
     }

@@ -33,7 +33,7 @@ public class Ball : MonoBehaviour
         }
 
         // Set ball color for night mode
-        if (state.isNightMode == "true")
+        if (state.isNightModeGreen == "true" || state.isNightModeBlue == "true" || state.isNightModeRed == "true")
         {
             GetComponent<MeshRenderer>().material = nightModeColorMaterial;
         } else

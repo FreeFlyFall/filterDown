@@ -13,7 +13,11 @@ public class UnlockablesMenu : MonoBehaviour
     public Toggle randomRotationInversionToggle;
     public Toggle invertGravityToggle;
     public Toggle horizontalMode;
-    public Toggle neonNightMode;
+
+    public Toggle neonNightModeGreen;
+    public Toggle neonNightModeBlue;
+    public Toggle neonNightModeRed;
+
     public Toggle easyMode;
     public Toggle PinballMode;
 
@@ -28,7 +32,11 @@ public class UnlockablesMenu : MonoBehaviour
         randomRotationInversionToggle.isOn = (PlayerPrefs.GetString("isControlRandom", "false") == "true") ? true : false;
         invertGravityToggle.isOn = (PlayerPrefs.GetString("isGravityInverted", "false") == "true") ? true : false;
         horizontalMode.isOn = (PlayerPrefs.GetString("isHorizontalMode", "false") == "true") ? true : false;
-        neonNightMode.isOn = (PlayerPrefs.GetString("isNightMode", "false") == "true") ? true : false;
+
+        neonNightModeGreen.isOn = (PlayerPrefs.GetString("isNightModeGreen", "false") == "true") ? true : false;
+        neonNightModeBlue.isOn = (PlayerPrefs.GetString("isNightModeBlue", "false") == "true") ? true : false;
+        neonNightModeRed.isOn = (PlayerPrefs.GetString("isNightModeRed", "false") == "true") ? true : false;
+
         easyMode.isOn = (PlayerPrefs.GetString("isEasyMode", "false") == "true") ? true : false;
         PinballMode.isOn = (PlayerPrefs.GetString("isPinballControl", "false") == "true") ? true : false;
     }
@@ -74,10 +82,22 @@ public class UnlockablesMenu : MonoBehaviour
     {
         StoreToggleBool("isHorizontalMode", isToggled);
     }
-    public void SetNeonNightModeToggle(bool isToggled)
+
+    // Night modes
+    public void SetNeonNightModeGreenToggle(bool isToggled)
     {
-        StoreToggleBool("isNightMode", isToggled);
+        StoreToggleBool("isNightModeGreen", isToggled);
     }
+    public void SetNeonNightModeBlueToggle(bool isToggled)
+    {
+        StoreToggleBool("isNightModeBlue", isToggled);
+    }
+    public void SetNeonNightModeRedToggle(bool isToggled)
+    {
+        StoreToggleBool("isNightModeRed", isToggled);
+    }
+
+
     public void SetEasyModeToggle(bool isToggled)
     {
         StoreToggleBool("isEasyMode", isToggled);

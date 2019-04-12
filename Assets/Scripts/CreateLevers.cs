@@ -13,7 +13,12 @@ public class CreateLevers : MonoBehaviour
 
     // Lever related variable declaration and definition
     public GameObject dayModeLeverPrefab;
-    public GameObject nightModeLeverPrefab;
+/// Add new nightMode levers and access from scriptable object
+    public GameObject nightModeLeverGreenPrefab;
+    public GameObject nightModeLeverBluePrefab;
+    public GameObject nightModeLeverRedPrefab;
+
+
     private GameObject leverPrefab;
     private GameObject[] leverArray; // = new GameObject[5];
     private Vector3 leverPos;
@@ -65,11 +70,21 @@ public class CreateLevers : MonoBehaviour
             farSpacing = 6;
         }
 
+        ///Separate
         // Use different prefab for lever per mode
-        if (state.isNightMode == "true")
+        if (state.isNightModeGreen == "true")
         {
-            leverPrefab = nightModeLeverPrefab;
-        } else
+            leverPrefab = nightModeLeverGreenPrefab;
+        }
+        else if (state.isNightModeBlue == "true")
+        {
+            leverPrefab = nightModeLeverBluePrefab;
+        }
+        else if (state.isNightModeRed == "true")
+        {
+            leverPrefab = nightModeLeverRedPrefab;
+        }
+        else
         {
             // lever for regular mode.
             leverPrefab = dayModeLeverPrefab;

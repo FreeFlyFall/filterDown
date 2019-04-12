@@ -727,8 +727,13 @@ MonoBehaviour:
   ball: {fileID: 248369878}
   dayModeLeverPrefab: {fileID: 607322466464545930, guid: 9a94ef67776111e47a98cc211861bc50,
     type: 3}
-  nightModeLeverPrefab: {fileID: 607322466464545930, guid: a7f7de93f061d0f44a88ba412ec7a2ca,
+  nightModeLeverGreenPrefab: {fileID: 607322466464545930, guid: a7f7de93f061d0f44a88ba412ec7a2ca,
     type: 3}
+  nightModeLeverBluePrefab: {fileID: 607322466464545930, guid: 97c3580bda59e4a40baad19292cb4e11,
+    type: 3}
+  nightModeLeverRedPrefab: {fileID: 607322466464545930, guid: a84d3296d35f74440bae0989af4d351c,
+    type: 3}
+  isLeftPin: 1
 --- !u!114 &534669908
 MonoBehaviour:
   m_ObjectHideFlags: 0

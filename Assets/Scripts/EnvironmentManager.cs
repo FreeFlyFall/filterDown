@@ -10,7 +10,7 @@ public class EnvironmentManager : MonoBehaviour
 
     void Start()
     {
-        if (state.isNightMode == "true")
+        if (state.isNightModeGreen == "true" || state.isNightModeBlue == "true" || state.isNightModeRed == "true")
         {
             directionalLight.enabled = false;
             RenderSettings.skybox = nightSkybox;
